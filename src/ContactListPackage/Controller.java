@@ -1,19 +1,20 @@
 package ContactListPackage;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.stage.Window;
+import javafx.util.Callback;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Controller {
 
@@ -48,5 +49,48 @@ public class Controller {
         stage.close();
     }
 
+    @FXML
+    private TableView<Contact> contactTable;
+    @FXML
+    private TableColumn<Contact, String> tableName;
+    @FXML
+    private TableColumn<Contact, String> tableSurname;
+    @FXML
+    private TableColumn<Contact, String> tablePhone;
+    @FXML
+    private TableColumn<Contact, String> tableNote;
+
+    private ArrayList<Contact> contacts;
+
+    Contact kl = new Contact("Klaudia", "Johns", 123123123, "girl");
+    Contact rf = new Contact("Rafał", "Wick", 456456456, "boy");
+
+    ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf);
+
+
+    public void initialize() {
+
+        tableName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tableSurname.setCellValueFactory(new PropertyValueFactory<>("surname"));
+        tablePhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        tableNote.setCellValueFactory(new PropertyValueFactory<>("note"));
+
+        contactTable.setItems(lista);
+}
+
 
 }
+
+//
+//    ObservableList<Person> data = ...
+//        TableView<Person> tableView = new TableView<Person>(data);
+//
+//        TableColumn<Person,String> firstNameCol = new TableColumn<Person,String>("First Name");
+//        firstNameCol.setCellValueFactory(new Callback<CellDataFeatures<Person, String>, ObservableValue<String>>() {
+//public ObservableValue<String> call(CellDataFeatures<Person, String> p) {
+//        // p.getValue() returns the Person instance for a particular TableView row
+//        return p.getValue().firstNameProperty();
+//        }
+//        });
+//
+//        tableView.getColumns().add(firstNameCol);}

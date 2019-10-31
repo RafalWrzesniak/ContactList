@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 
 import java.util.concurrent.TimeUnit;
 
+import static javafx.application.Platform.exit;
+
 public class Main extends Application {
 
     @Override
@@ -19,6 +21,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.show();
 
+//        exit();
     }
 
 
