@@ -41,12 +41,10 @@ public class Controller {
             e.printStackTrace();
             return;
         }
-        dialog.show();
-    }
 
-    public void closeDialog() {
-        Stage stage = (Stage) closeDialogButton.getScene().getWindow();
-        stage.close();
+        dialog.getDialogPane().getButtonTypes().add(new ButtonType("Run away from here", ButtonBar.ButtonData.CANCEL_CLOSE));
+        dialog.show();
+
     }
 
     @FXML
@@ -65,7 +63,7 @@ public class Controller {
     Contact kl = new Contact("Klaudia", "Johns", 123123123, "girl");
     Contact rf = new Contact("Rafał", "Wick", 456456456, "boy");
     ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf);
-
+    Contact th = new Contact("Someone", "Else", 789789789, "Here");
 
     public void initialize() {
 
@@ -73,27 +71,8 @@ public class Controller {
         tableSurname.setCellValueFactory(new PropertyValueFactory<>("surname"));
         tablePhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
         tableNote.setCellValueFactory(new PropertyValueFactory<>("note"));
-
+        lista.add(th);
         contactTable.setItems(lista);
 }
 
-    public void initialize2() {
-//        setTable();
-    }
-
-
 }
-
-//
-//    ObservableList<Person> data = ...
-//        TableView<Person> tableView = new TableView<Person>(data);
-//
-//        TableColumn<Person,String> firstNameCol = new TableColumn<Person,String>("First Name");
-//        firstNameCol.setCellValueFactory(new Callback<CellDataFeatures<Person, String>, ObservableValue<String>>() {
-//public ObservableValue<String> call(CellDataFeatures<Person, String> p) {
-//        // p.getValue() returns the Person instance for a particular TableView row
-//        return p.getValue().firstNameProperty();
-//        }
-//        });
-//
-//        tableView.getColumns().add(firstNameCol);}
