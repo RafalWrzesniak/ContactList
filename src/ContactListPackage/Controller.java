@@ -50,21 +50,20 @@ public class Controller {
     }
 
     @FXML
-    private TableView<Contact> contactTable;
+    private TableView<Contact> contactTable = new TableView<>();
     @FXML
-    private TableColumn<Contact, String> tableName;
+    private TableColumn<Contact, String> tableName = new TableColumn<>();
     @FXML
-    private TableColumn<Contact, String> tableSurname;
+    private TableColumn<Contact, String> tableSurname = new TableColumn<>();
     @FXML
-    private TableColumn<Contact, String> tablePhone;
+    private TableColumn<Contact, String> tablePhone = new TableColumn<>();
     @FXML
-    private TableColumn<Contact, String> tableNote;
+    private TableColumn<Contact, String> tableNote = new TableColumn<>();
 
-    private ArrayList<Contact> contacts;
+
 
     Contact kl = new Contact("Klaudia", "Johns", 123123123, "girl");
     Contact rf = new Contact("Rafał", "Wick", 456456456, "boy");
-
     ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf);
 
 
@@ -77,6 +76,10 @@ public class Controller {
 
         contactTable.setItems(lista);
 }
+
+    public void initialize2() {
+//        setTable();
+    }
 
 
 }
