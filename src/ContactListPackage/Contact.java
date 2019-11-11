@@ -4,15 +4,15 @@ public class Contact {
 
     private String name;
     private String surname;
-    private int phone;
+    private String phone;
     private String note;
 
-//
-    public Contact(String name) {
-        setName(name);
+
+    public Contact() {
+
     }
 
-    public Contact(String name, String surname, int phone, String note) {
+    public Contact(String name, String surname, String phone, String note) {
         this.name = name;
         this.surname = surname;
         this.phone = phone;
@@ -21,8 +21,10 @@ public class Contact {
 
     // setters
     public void setName(String name) {
-        if(name.length() > 3 && name.length() < 15) {
+        if(name.length() > 2 && name.length() < 15) {
             this.name = name;
+        } else {
+            System.out.println("Name is too short!");
         }
     }
     public void setSurname(String surname) {
@@ -32,7 +34,7 @@ public class Contact {
             this.surname = "";
         }
     }
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
     public void setNote(String note) {
@@ -52,8 +54,10 @@ public class Contact {
         return surname;
     }
     public String getPhone() {
-        return phone != 0 ? String.valueOf(phone) : "";
+//        return phone != 0 ? String.valueOf(phone) : "";
+        return phone;
     }
+
     public String getNote() {
         return note;
     }
