@@ -20,11 +20,11 @@ public class Contact {
     }
 
     // setters
-    public void setName(String name) {
-        if(name.length() > 2 && name.length() < 15) {
+    public void setName(String name) throws IllegalArgumentException {
+        if(name.equals("") || name.length() > 2 && name.length() < 15) {
             this.name = name;
         } else {
-            System.out.println("Name is too short!");
+            throw new IllegalArgumentException("Name must have more then 2 and less then 15 characters!");
         }
     }
     public void setSurname(String surname) {

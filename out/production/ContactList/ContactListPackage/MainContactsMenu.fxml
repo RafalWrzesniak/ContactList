@@ -3,16 +3,20 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 
+<?import javafx.scene.shape.Shape?>
 <BorderPane fx:id="mainBorderPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ContactListPackage.Controller">
    <center>
-      <TableView fx:id="contactTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="contactTable" prefHeight="365.0" prefWidth="496.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="tableName" prefWidth="100" text="Name" />
           <TableColumn fx:id="tableSurname" prefWidth="100" text="Surname" />
@@ -24,38 +28,58 @@
    <top>
       <ButtonBar maxWidth="-Infinity" BorderPane.alignment="TOP_LEFT">
         <buttons>
-            <MenuButton mnemonicParsing="false" text="New contact">
+            <MenuButton fx:id="ncMenuButton" mnemonicParsing="false" text="New contact">
               <items>
                 <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField promptText="Name" />
+                        <TextField fx:id="ncPopName" onKeyPressed="#handleEnter" promptText="Name">
+                            <tooltip>
+                                <Tooltip style="-fx-font: normal 14 Langdon;" text="Name must have more then 2 and less then 15 characters" />
+                            </tooltip>
+                        </TextField>
                      </graphic>
                   </MenuItem>
                 <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField promptText="Surname" />
+                        <TextField fx:id="ncPopSurName" onKeyPressed="#handleEnter" promptText="Surname" />
                      </graphic>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField promptText="Phone" />
+                        <TextField fx:id="ncPopPhone" onKeyPressed="#handleEnter" promptText="Phone" />
                      </graphic>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField promptText="Note" />
+                        <TextField fx:id="ncPopNote" onKeyPressed="#handleEnter" promptText="Note" />
                      </graphic>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <Button mnemonicParsing="false" text="Apply" />
+                        <HBox spacing="43">
+                           <children>
+                               <Button defaultButton="true" onAction="#ncApply" text="Apply" />
+                               <Button onAction="#clearNcFields" text="Clear all" />
+                           </children>
+                        </HBox>
                      </graphic>
                   </MenuItem>
               </items>
             </MenuButton>
             <Button mnemonicParsing="false" onAction="#showHelpDialog" text="Help" />
             <Button mnemonicParsing="false" onAction="#exitProgram" text="Exit" />
+<!--            <Label fx:id="labelka" text="Label for sumting and add more teeeeeeeeext here" translateX="-200.0" translateY="100.0" style="-fx-background-color: red;-->
+<!--                                                                                                                                            -fx-text-fill: white;-->
+<!--                                                                                                                                            -fx-font: bold 12 Langdon;-->
+<!--                                                                                                                                            -fx-text-alignment: right;-->
+<!--                                                                                                                                            -fx-background-radius: 25 10 10 5; " />-->
+
+
+
+
+
         </buttons>
+
          <BorderPane.margin>
             <Insets left="-15.0" />
          </BorderPane.margin>

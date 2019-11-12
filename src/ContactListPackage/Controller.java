@@ -10,11 +10,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+
 import java.io.IOException;
 
 public class Controller {
 
-    @FXML private BorderPane mainBorderPane;
+    @FXML private Label labelka = new Label();
+    @FXML private BorderPane mainBorderPane = new BorderPane();
     @FXML private TableView<Contact> contactTable = new TableView<>();
     @FXML private TableColumn<Contact, String> tableName = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tableSurname = new TableColumn<>();
@@ -30,7 +35,6 @@ public class Controller {
     public void exitProgram() {
         Platform.exit();
     }
-
 
     @FXML
     public void showHelpDialog() {
@@ -54,14 +58,22 @@ public class Controller {
     @FXML
     private void ncApply() {
 
+        ncPopName.getTooltip().activatedProperty();
         Contact newContact = new Contact();
-        newContact.setName(ncPopName.getText());
-        newContact.setSurname(ncPopSurName.getText());
-        newContact.setPhone(ncPopPhone.getText());
-        newContact.setNote(ncPopNote.getText());
+        try {
+            newContact.setName(ncPopName.getText());
+            newContact.setSurname(ncPopSurName.getText());
+            newContact.setPhone(ncPopPhone.getText());
+            newContact.setNote(ncPopNote.getText());
+        }
+        catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+
+            return;
+        }
+
 
         lista.add(newContact);
-//        System.out.println(lista.get(lista.size()-1).getName());
         contactTable.setItems(lista);
         contactTable.refresh();
         clearNcFields();
@@ -84,10 +96,10 @@ public class Controller {
 //        ncMenuButton.show();
     }
 
-    Contact kl = new Contact("Klaudia", "Johns", "123123123", "girl");
-    Contact rf = new Contact("Rafał", "Wick", "456456456", "boy");
-    public ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf);
-    Contact th = new Contact("Someone", "Else", "789789789", "Here");
+    private Contact kl = new Contact("Klaudia", "Johns", "123123123", "girl");
+    private Contact rf = new Contact("Rafał", "Wick", "456456456", "boy");
+    private ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf);
+    private Contact th = new Contact("Someone", "Else", "789789789", "Here");
 
     public void initialize() {
         tableName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -96,6 +108,9 @@ public class Controller {
         tableNote.setCellValueFactory(new PropertyValueFactory<>("note"));
         lista.add(th);
         contactTable.setItems(lista);
+
+        labelka.setVisible(true);
+//        labelka.autosize();
     }
 
 
