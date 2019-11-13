@@ -1,5 +1,6 @@
 package ContactListPackage;
 
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,15 +10,18 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
 public class Controller {
 
+    @FXML private AnchorPane anchor;
     @FXML private Label labelka = new Label();
     @FXML private BorderPane mainBorderPane = new BorderPane();
     @FXML private TableView<Contact> contactTable = new TableView<>();
@@ -33,7 +37,36 @@ public class Controller {
 
     @FXML
     public void exitProgram() {
-        Platform.exit();
+//        Platform.exit();
+
+
+        int animationTime = 750;
+        anchor.setPrefHeight(44);
+        labelka.setVisible(true);
+        labelka.setPrefHeight(44);
+        final TranslateTransition translateLeftAnchor =
+                new TranslateTransition(Duration.millis(animationTime), anchor);
+
+        for(int i = 0; i <= animationTime; i++) {
+            if(i == 0){
+                translateLeftAnchor.setFromY(44);
+                translateLeftAnchor.setToY(0);
+                translateLeftAnchor.play();
+            }
+
+//            anchor.setPrefHeight(44*((float) i/animationTime));
+//            anchor.setPrefHeight(i);
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        System.out.println("ej");
+
+
     }
 
     @FXML
@@ -77,6 +110,7 @@ public class Controller {
         contactTable.setItems(lista);
         contactTable.refresh();
         clearNcFields();
+
     }
 
     @FXML
@@ -109,8 +143,11 @@ public class Controller {
         lista.add(th);
         contactTable.setItems(lista);
 
-        labelka.setVisible(true);
-//        labelka.autosize();
+
+        anchor.setPrefHeight(0);
+        anchor.setPrefWidth(0);
+//        labelka.setVisible(false);
+
     }
 
 
