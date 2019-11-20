@@ -84,7 +84,7 @@
    <bottom>
       <AnchorPane fx:id="anchor" prefHeight="0.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="labelka" prefHeight="44" style="-fx-background-color: red; -fx-border-color: gray; -fx-border-width: 4; -fx-font-weight: bold; -fx-font-size: 16; -fx-font-family: Langdon;" text="Name must have more then 2 and less then 15 characters!" textFill="WHITE">
+            <Label fx:id="labelka" prefHeight="44" prefWidth="600.0" style="-fx-background-color: red; -fx-border-color: gray; -fx-border-width: 4; -fx-font-weight: bold; -fx-font-size: 16; -fx-font-family: Langdon;" textFill="WHITE">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>

@@ -4,8 +4,10 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
@@ -15,6 +17,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -37,35 +40,26 @@ public class Controller {
 
     @FXML
     public void exitProgram() {
-//        Platform.exit();
+        Platform.exit();
+    }
 
-
+    private void showCorrectionInfo(String infoText, boolean showHide){
         int animationTime = 750;
-        anchor.setPrefHeight(44);
-        labelka.setVisible(true);
-        labelka.setPrefHeight(44);
-        final TranslateTransition translateLeftAnchor =
-                new TranslateTransition(Duration.millis(animationTime), anchor);
-
-        for(int i = 0; i <= animationTime; i++) {
-            if(i == 0){
-                translateLeftAnchor.setFromY(44);
-                translateLeftAnchor.setToY(0);
-                translateLeftAnchor.play();
-            }
-
-//            anchor.setPrefHeight(44*((float) i/animationTime));
-//            anchor.setPrefHeight(i);
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (!infoText.isEmpty()) {
+            labelka.setText(infoText);
+            labelka.setVisible(true);
         }
 
-
-        System.out.println("ej");
-
+        final TranslateTransition translateLabel =
+                new TranslateTransition(Duration.millis(animationTime), anchor);
+        if (showHide) {
+            translateLabel.setFromY(44);
+            translateLabel.setToY(0);
+        } else {
+            translateLabel.setFromY(0);
+            translateLabel.setToY(44);
+        }
+        translateLabel.play();
 
     }
 
@@ -92,25 +86,27 @@ public class Controller {
     private void ncApply() {
 
         ncPopName.getTooltip().activatedProperty();
-        Contact newContact = new Contact();
-        try {
-            newContact.setName(ncPopName.getText());
-            newContact.setSurname(ncPopSurName.getText());
-            newContact.setPhone(ncPopPhone.getText());
-            newContact.setNote(ncPopNote.getText());
+        if (!ncPopName.getText().trim().isEmpty() || !ncPopSurName.getText().trim().isEmpty() ||
+                !ncPopPhone.getText().trim().isEmpty() || !ncPopNote.getText().trim().isEmpty()) {
+            Contact newContact = new Contact();
+            try {
+                newContact.setName(ncPopName.getText());
+                newContact.setSurname(ncPopSurName.getText());
+                newContact.setPhone(ncPopPhone.getText());
+                newContact.setNote(ncPopNote.getText());
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+                showCorrectionInfo(e.getMessage(), true);
+                return;
+            }
+
+
+            lista.add(newContact);
+            contactTable.setItems(lista);
+            contactTable.refresh();
+            clearNcFields();
+            showCorrectionInfo("", false);
         }
-        catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-
-            return;
-        }
-
-
-        lista.add(newContact);
-        contactTable.setItems(lista);
-        contactTable.refresh();
-        clearNcFields();
-
     }
 
     @FXML
@@ -144,9 +140,9 @@ public class Controller {
         contactTable.setItems(lista);
 
 
-        anchor.setPrefHeight(0);
+        anchor.setPrefHeight(44);
         anchor.setPrefWidth(0);
-//        labelka.setVisible(false);
+        labelka.setVisible(false);
 
     }
 

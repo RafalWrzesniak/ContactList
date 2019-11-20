@@ -21,28 +21,43 @@ public class Contact {
 
     // setters
     public void setName(String name) throws IllegalArgumentException {
-        if(name.equals("") || name.length() > 2 && name.length() < 15) {
+        if(name.trim().isEmpty() || name.length() > 2 && name.length() < 15) {
             this.name = name;
         } else {
             throw new IllegalArgumentException("Name must have more then 2 and less then 15 characters!");
         }
     }
-    public void setSurname(String surname) {
-        if(surname != null && surname.length() > 3 && surname.length() < 25) {
+    public void setSurname(String surname) throws IllegalArgumentException {
+        if(surname.trim().isEmpty() || surname.length() > 3 && surname.length() < 25) {
             this.surname = surname;
         } else {
-            this.surname = "";
+            throw new IllegalArgumentException("Surname must have more then 3 and less then 25 characters!");
         }
     }
     public void setPhone(String phone) {
-        this.phone = phone;
+        if(phone.length() == 9) {
+            try {
+                Double.parseDouble(phone);
+            } catch(NumberFormatException e){
+                throw new IllegalArgumentException("Phone must have digits only!");
+            }
+            this.phone = phone;
+        }
+        else if(phone.trim().isEmpty()){
+            this.phone = phone;
+        }
+        else {
+        throw new IllegalArgumentException("Phone must have 9 digits!");
+        }
     }
+
+
     public void setNote(String note) {
-        if(note != null && note.length() > 3 && note.length() < 50) {
-        this.note = note;
-    } else {
-        this.note = "";
-    }
+        if(note.trim().isEmpty() || note.length() < 50) {
+            this.note = note;
+        } else {
+            throw new IllegalArgumentException("Note must have less then 50 characters!");
+        }
     }
 
 
