@@ -58,8 +58,8 @@
                      <graphic>
                         <HBox spacing="43">
                            <children>
-                               <Button defaultButton="true" onAction="#ncApply" text="Apply" />
-                               <Button onAction="#clearNcFields" text="Clear all" />
+                               <Button fx:id="ncApplyButton" defaultButton="true" onAction="#ncApply" text="Apply" />
+                               <Button fx:id="clearAllButton" onAction="#clearNcFields" text="Clear all" />
                            </children>
                         </HBox>
                      </graphic>

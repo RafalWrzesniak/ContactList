@@ -4,7 +4,9 @@ import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -24,7 +26,10 @@ import java.io.IOException;
 
 public class Controller {
 
-    @FXML private AnchorPane anchor;
+    @FXML private Button clearAllButton = new Button();
+    @FXML private Button ncApplyButton = new Button();
+    @FXML private MenuButton ncMenuButton = new MenuButton();
+    @FXML private AnchorPane anchor = new AnchorPane();
     @FXML private Label labelka = new Label();
     @FXML private BorderPane mainBorderPane = new BorderPane();
     @FXML private TableView<Contact> contactTable = new TableView<>();
@@ -32,7 +37,6 @@ public class Controller {
     @FXML private TableColumn<Contact, String> tableSurname = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tablePhone = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tableNote = new TableColumn<>();
-    @FXML private MenuButton ncMenuButton;
     @FXML public TextField ncPopName;
     @FXML public TextField ncPopSurName;
     @FXML public TextField ncPopPhone;
@@ -44,22 +48,24 @@ public class Controller {
     }
 
     private void showCorrectionInfo(String infoText, boolean showHide){
-        int animationTime = 750;
         if (!infoText.isEmpty()) {
             labelka.setText(infoText);
             labelka.setVisible(true);
         }
 
-        final TranslateTransition translateLabel =
-                new TranslateTransition(Duration.millis(animationTime), anchor);
+        final TranslateTransition translateLabel = new TranslateTransition(Duration.millis(750), anchor);
+
+        System.out.println(labelka.isVisible());
         if (showHide) {
             translateLabel.setFromY(44);
             translateLabel.setToY(0);
+            if(labelka.isVisible()) translateLabel.play();
         } else {
             translateLabel.setFromY(0);
             translateLabel.setToY(44);
+            translateLabel.setOnFinished(actionEvent -> labelka.setVisible(false));
         }
-        translateLabel.play();
+//        translateLabel.play();
 
     }
 
@@ -123,7 +129,13 @@ public class Controller {
         ncPopSurName.clear();
         ncPopPhone.clear();
         ncPopNote.clear();
-//        ncMenuButton.show();
+    }
+
+    private void showMenuAfterError(){
+        if (labelka.isVisible()) {
+            System.out.println("menu error should be shown");
+            ncMenuButton.show();
+        }
     }
 
     private Contact kl = new Contact("Klaudia", "Johns", "123123123", "girl");
@@ -139,7 +151,8 @@ public class Controller {
         lista.add(th);
         contactTable.setItems(lista);
 
-
+        clearAllButton.setOnMouseReleased(actionEvent -> ncMenuButton.show());
+        ncApplyButton.setOnMouseReleased(actionEvent -> showMenuAfterError());
         anchor.setPrefHeight(44);
         anchor.setPrefWidth(0);
         labelka.setVisible(false);
