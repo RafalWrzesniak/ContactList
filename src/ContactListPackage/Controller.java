@@ -1,25 +1,20 @@
 package ContactListPackage;
 
+import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Shape;
-import javafx.scene.text.Font;
-import javafx.stage.Stage;
+import javafx.scene.robot.Robot;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -47,25 +42,26 @@ public class Controller {
         Platform.exit();
     }
 
+
     private void showCorrectionInfo(String infoText, boolean showHide){
-        if (!infoText.isEmpty()) {
-            labelka.setText(infoText);
+//        if (!infoText.isEmpty()) {
+//            labelka.setText(infoText);
             labelka.setVisible(true);
-        }
+//        }
 
         final TranslateTransition translateLabel = new TranslateTransition(Duration.millis(750), anchor);
 
-        System.out.println(labelka.isVisible());
+        System.out.println("Labelka jest " + labelka.isVisible());
         if (showHide) {
             translateLabel.setFromY(44);
             translateLabel.setToY(0);
-            if(labelka.isVisible()) translateLabel.play();
+            if(!labelka.isVisible()) translateLabel.play();
         } else {
             translateLabel.setFromY(0);
             translateLabel.setToY(44);
             translateLabel.setOnFinished(actionEvent -> labelka.setVisible(false));
+            translateLabel.play();
         }
-//        translateLabel.play();
 
     }
 
@@ -88,39 +84,72 @@ public class Controller {
         dialog.getDialogPane().getButtonTypes().add(new ButtonType("Run away from here", ButtonBar.ButtonData.CANCEL_CLOSE));
         dialog.show();
     }
-    @FXML
-    private void ncApply() {
 
-        ncPopName.getTooltip().activatedProperty();
-        if (!ncPopName.getText().trim().isEmpty() || !ncPopSurName.getText().trim().isEmpty() ||
-                !ncPopPhone.getText().trim().isEmpty() || !ncPopNote.getText().trim().isEmpty()) {
-            Contact newContact = new Contact();
+    private boolean checkTextFieldsOptions(Contact newContact) {
+        if (isAnyFieldFilled()) {
             try {
                 newContact.setName(ncPopName.getText());
                 newContact.setSurname(ncPopSurName.getText());
                 newContact.setPhone(ncPopPhone.getText());
                 newContact.setNote(ncPopNote.getText());
+                return true;
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
                 showCorrectionInfo(e.getMessage(), true);
-                return;
             }
+        }
+        return false;
+    }
 
+    private boolean isAnyFieldFilled() {
+        return (!ncPopName.getText().trim().isEmpty() || !ncPopSurName.getText().trim().isEmpty() ||
+                !ncPopPhone.getText().trim().isEmpty() || !ncPopNote.getText().trim().isEmpty());
+    }
 
+    @FXML
+    private void ncApply() {
+
+        Contact newContact = new Contact();
+        if (checkTextFieldsOptions(newContact)){
             lista.add(newContact);
             contactTable.setItems(lista);
             contactTable.refresh();
             clearNcFields();
             showCorrectionInfo("", false);
+            tabPresser.keyPress(KeyCode.ESCAPE);
         }
+
+    }
+
+
+    private Robot tabPresser = new Robot();
+    @FXML
+    private void handleKeyEvents(KeyEvent keyEvent){
+        if(keyEvent.getCode() == KeyCode.ENTER) {
+            ncApply();
+        } else if(keyEvent.getCode() == KeyCode.TAB) {
+            tabPresser.keyPress(KeyCode.TAB);
+        }
+
     }
 
     @FXML
-    private void handleEnter(KeyEvent keyEvent){
-        if(keyEvent.getCode() == KeyCode.ENTER) {
-            ncApply();
-        }
-
+    private void backgroundErrorChecking(){
+        PauseTransition checkForErrorFixed = new PauseTransition(Duration.seconds(1));
+        checkForErrorFixed.setOnFinished((e) -> {
+            if(!isAnyFieldFilled() || checkTextFieldsOptions(new Contact())) {
+                System.out.println("nothing is happening");
+                showCorrectionInfo("", false);
+            } else{
+                System.out.println("there is some error");
+            }
+            if(ncMenuButton.isShowing()){
+                checkForErrorFixed.playFromStart();
+            } else {
+                checkForErrorFixed.stop();
+            }
+        });
+        checkForErrorFixed.play();
     }
 
     @FXML
