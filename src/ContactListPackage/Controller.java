@@ -66,7 +66,6 @@ public class Controller {
         final TranslateTransition translateLabel = new TranslateTransition(Duration.millis(750), anchor);
         if (showHide) {
             if(!labelka.isVisible() && !translateLabel.getStatus().equals(Animation.Status.RUNNING)){
-                System.out.println("show executing");
                 labelka.setText(infoText);
                 labelka.setVisible(true);
                 translateLabel.setFromY(44);
@@ -74,7 +73,6 @@ public class Controller {
                 translateLabel.play();
             }
         } else if(labelka.isVisible() && !translateLabel.getStatus().equals(Animation.Status.RUNNING)){
-            System.out.println("hide executing");
             translateLabel.setFromY(0);
             translateLabel.setToY(44);
             translateLabel.setOnFinished(actionEvent -> labelka.setVisible(false));
@@ -108,9 +106,11 @@ public class Controller {
         if (checkTextFieldsOptions(newContact)){
             lista.add(newContact);
             contactTable.setItems(lista);
+
             contactTable.refresh();
             clearNcFields();
             tabPresser.keyPress(KeyCode.ESCAPE);
+            extendColumnWidth();
         }
     }
 
@@ -153,6 +153,20 @@ public class Controller {
         if (labelka.isVisible()) {
             System.out.println("menu error should be shown");
             ncMenuButton.show();
+        }
+    }
+
+    private void extendColumnWidth() {
+        String testingCellVaule;
+        int longestValue = 0;
+        for (int column = 0; column < 4; column++) {
+            for (int row = 0; row < lista.size(); row++) {
+                testingCellVaule = contactTable.getColumns().get(column).getCellObservableValue(row).getValue().toString();
+                if(testingCellVaule.length() > longestValue) longestValue = testingCellVaule.length();
+            }
+            if(longestValue > 17) contactTable.getColumns().get(column).setPrefWidth(130);
+            if(longestValue > 30) contactTable.getColumns().get(column).setPrefWidth(160);
+            longestValue = 0;
         }
     }
 

@@ -18,10 +18,10 @@
    <center>
       <TableView fx:id="contactTable" prefHeight="365.0" prefWidth="496.0" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn fx:id="tableName" prefWidth="100" text="Name" />
-          <TableColumn fx:id="tableSurname" prefWidth="100" text="Surname" />
-          <TableColumn fx:id="tablePhone" prefWidth="100" text="Phone" />
-          <TableColumn fx:id="tableNote" prefWidth="100" text="Note" />
+          <TableColumn fx:id="tableName" prefWidth="100" minWidth="50" text="Name" />
+          <TableColumn fx:id="tableSurname" prefWidth="100" minWidth="60" text="Surname" />
+          <TableColumn fx:id="tablePhone" prefWidth="100" minWidth="50" text="Phone" />
+          <TableColumn fx:id="tableNote" prefWidth="100" minWidth="50" text="Note" />
         </columns>
       </TableView>
    </center>
@@ -41,17 +41,29 @@
                   </MenuItem>
                 <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField fx:id="ncPopSurName" onKeyPressed="#handleKeyEvents" promptText="Surname" />
+                        <TextField fx:id="ncPopSurName" onKeyPressed="#handleKeyEvents" promptText="Surname" >
+                             <tooltip>
+                                 <Tooltip style="-fx-font: normal 14 Langdon;" text="Surname must have more then 3 and less then 25 characters!" />
+                             </tooltip>
+                        </TextField>
                      </graphic>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField fx:id="ncPopPhone" onKeyPressed="#handleKeyEvents" promptText="Phone" />
+                        <TextField fx:id="ncPopPhone" onKeyPressed="#handleKeyEvents" promptText="Phone">
+                             <tooltip>
+                                 <Tooltip style="-fx-font: normal 14 Langdon;" text="Phone must have 9 digits" />
+                             </tooltip>
+                        </TextField>
                      </graphic>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField fx:id="ncPopNote" onKeyPressed="#handleKeyEvents" promptText="Note" />
+                        <TextField fx:id="ncPopNote" onKeyPressed="#handleKeyEvents" promptText="Note" >
+                             <tooltip>
+                                 <Tooltip style="-fx-font: normal 14 Langdon;" text="Note must have less then 50 characters!" />
+                             </tooltip>
+                        </TextField>
                      </graphic>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
