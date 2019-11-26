@@ -42,29 +42,6 @@ public class Controller {
         Platform.exit();
     }
 
-
-    private void showCorrectionInfo(String infoText, boolean showHide){
-//        if (!infoText.isEmpty()) {
-//            labelka.setText(infoText);
-            labelka.setVisible(true);
-//        }
-
-        final TranslateTransition translateLabel = new TranslateTransition(Duration.millis(750), anchor);
-
-        System.out.println("Labelka jest " + labelka.isVisible());
-        if (showHide) {
-            translateLabel.setFromY(44);
-            translateLabel.setToY(0);
-            if(!labelka.isVisible()) translateLabel.play();
-        } else {
-            translateLabel.setFromY(0);
-            translateLabel.setToY(44);
-            translateLabel.setOnFinished(actionEvent -> labelka.setVisible(false));
-            translateLabel.play();
-        }
-
-    }
-
     @FXML
     public void showHelpDialog() {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -85,6 +62,25 @@ public class Controller {
         dialog.show();
     }
 
+    private void showCorrectionInfo(String infoText, boolean showHide){
+        final TranslateTransition translateLabel = new TranslateTransition(Duration.millis(750), anchor);
+        if (showHide) {
+            if(!labelka.isVisible() && !translateLabel.getStatus().equals(Animation.Status.RUNNING)){
+                System.out.println("show executing");
+                labelka.setText(infoText);
+                labelka.setVisible(true);
+                translateLabel.setFromY(44);
+                translateLabel.setToY(0);
+                translateLabel.play();
+            }
+        } else if(labelka.isVisible() && !translateLabel.getStatus().equals(Animation.Status.RUNNING)){
+            System.out.println("hide executing");
+            translateLabel.setFromY(0);
+            translateLabel.setToY(44);
+            translateLabel.setOnFinished(actionEvent -> labelka.setVisible(false));
+            translateLabel.play();
+        }
+    }
     private boolean checkTextFieldsOptions(Contact newContact) {
         if (isAnyFieldFilled()) {
             try {
@@ -94,7 +90,7 @@ public class Controller {
                 newContact.setNote(ncPopNote.getText());
                 return true;
             } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
+//                System.out.println(e.getMessage());
                 showCorrectionInfo(e.getMessage(), true);
             }
         }
@@ -108,40 +104,33 @@ public class Controller {
 
     @FXML
     private void ncApply() {
-
         Contact newContact = new Contact();
         if (checkTextFieldsOptions(newContact)){
             lista.add(newContact);
             contactTable.setItems(lista);
             contactTable.refresh();
             clearNcFields();
-            showCorrectionInfo("", false);
             tabPresser.keyPress(KeyCode.ESCAPE);
         }
-
     }
 
 
     private Robot tabPresser = new Robot();
     @FXML
-    private void handleKeyEvents(KeyEvent keyEvent){
+    private void handleKeyEvents(KeyEvent keyEvent) {
         if(keyEvent.getCode() == KeyCode.ENTER) {
             ncApply();
         } else if(keyEvent.getCode() == KeyCode.TAB) {
             tabPresser.keyPress(KeyCode.TAB);
         }
-
     }
 
     @FXML
-    private void backgroundErrorChecking(){
+    private void backgroundErrorChecking() {
         PauseTransition checkForErrorFixed = new PauseTransition(Duration.seconds(1));
         checkForErrorFixed.setOnFinished((e) -> {
             if(!isAnyFieldFilled() || checkTextFieldsOptions(new Contact())) {
-                System.out.println("nothing is happening");
                 showCorrectionInfo("", false);
-            } else{
-                System.out.println("there is some error");
             }
             if(ncMenuButton.isShowing()){
                 checkForErrorFixed.playFromStart();
@@ -160,7 +149,7 @@ public class Controller {
         ncPopNote.clear();
     }
 
-    private void showMenuAfterError(){
+    private void showMenuAfterError() {
         if (labelka.isVisible()) {
             System.out.println("menu error should be shown");
             ncMenuButton.show();
@@ -185,6 +174,7 @@ public class Controller {
         anchor.setPrefHeight(44);
         anchor.setPrefWidth(0);
         labelka.setVisible(false);
+
 
     }
 
