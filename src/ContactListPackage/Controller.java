@@ -4,17 +4,23 @@ import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.robot.Robot;
+import javafx.util.Callback;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -32,6 +38,7 @@ public class Controller {
     @FXML private TableColumn<Contact, String> tableSurname = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tablePhone = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tableNote = new TableColumn<>();
+    @FXML private ContextMenu contextMenu = new ContextMenu();
     @FXML public TextField ncPopName;
     @FXML public TextField ncPopSurName;
     @FXML public TextField ncPopPhone;
@@ -40,6 +47,10 @@ public class Controller {
     @FXML
     public void exitProgram() {
         Platform.exit();
+    }
+
+    @FXML private void contextMenuHandler(){
+        System.out.println(45);
     }
 
     @FXML
@@ -183,11 +194,52 @@ public class Controller {
         lista.add(th);
         contactTable.setItems(lista);
 
+        System.out.println(contactTable.getSelectionModel());
+        System.out.println(contactTable.getSelectionModel().getSelectedCells());
+
         clearAllButton.setOnMouseReleased(actionEvent -> ncMenuButton.show());
         ncApplyButton.setOnMouseReleased(actionEvent -> showMenuAfterError());
         anchor.setPrefHeight(44);
         anchor.setPrefWidth(0);
         labelka.setVisible(false);
+
+        MenuItem deleteContact = new MenuItem("Delete contact");
+        deleteContact.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                System.out.println("clicked");
+
+                System.out.println(contactTable.getSelectionModel().getSelectedCells().isEmpty());
+            }
+        });
+
+
+        contactTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        contextMenu.getItems().addAll(deleteContact);
+        contactTable.setContextMenu(contextMenu);
+
+        //not working yet
+        contactTable.setRowFactory(new Callback<TableView<Contact>, TableRow<Contact>>() {
+
+            @Override
+            public TableRow<Contact> call(TableView<Contact> contactTableView) {
+                final TableRow<Contact> row = new TableRow<>();
+                final ContextMenu rowMenu = new ContextMenu();
+                MenuItem editItem = new MenuItem("Edit");
+                MenuItem removeItem = new MenuItem("Delete");
+                removeItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        contactTable.getItems().remove(row.getItem());
+                    }
+                });
+                rowMenu.getItems().addAll(editItem, removeItem);
+
+                // only display context menu for non-null items:
+                row.contextMenuProperty().bind(Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu)null));
+                return row;
+            }
+        });
 
 
     }
