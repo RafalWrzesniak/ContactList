@@ -13,10 +13,10 @@ public class Contact {
     }
 
     public Contact(String name, String surname, String phone, String note) {
-        this.name = name;
-        this.surname = surname;
-        this.phone = phone;
-        this.note = note;
+        setName(name);
+        setSurname(surname);
+        setPhone(phone);
+        setNote(note);
     }
 
     // setters

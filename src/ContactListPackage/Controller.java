@@ -13,10 +13,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.robot.Robot;
@@ -24,6 +23,7 @@ import javafx.util.Callback;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class Controller {
 
@@ -38,7 +38,6 @@ public class Controller {
     @FXML private TableColumn<Contact, String> tableSurname = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tablePhone = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tableNote = new TableColumn<>();
-    @FXML private ContextMenu contextMenu = new ContextMenu();
     @FXML public TextField ncPopName;
     @FXML public TextField ncPopSurName;
     @FXML public TextField ncPopPhone;
@@ -113,8 +112,11 @@ public class Controller {
 
     @FXML
     private void ncApply() {
-        Contact newContact = new Contact();
-        if (checkTextFieldsOptions(newContact)){
+//        Contact newContact = new Contact();
+//        if (checkTextFieldsOptions(newContact)){
+        if(isAnyFieldFilled()){
+            Contact newContact = new Contact(ncPopName.getText(), ncPopSurName.getText(),
+                                             ncPopPhone.getText(), ncPopNote.getText());
             lista.add(newContact);
             contactTable.setItems(lista);
 
@@ -194,55 +196,103 @@ public class Controller {
         lista.add(th);
         contactTable.setItems(lista);
 
-        System.out.println(contactTable.getSelectionModel());
-        System.out.println(contactTable.getSelectionModel().getSelectedCells());
-
         clearAllButton.setOnMouseReleased(actionEvent -> ncMenuButton.show());
         ncApplyButton.setOnMouseReleased(actionEvent -> showMenuAfterError());
         anchor.setPrefHeight(44);
         anchor.setPrefWidth(0);
         labelka.setVisible(false);
 
-        MenuItem deleteContact = new MenuItem("Delete contact");
-        deleteContact.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                System.out.println("clicked");
 
-                System.out.println(contactTable.getSelectionModel().getSelectedCells().isEmpty());
-            }
-        });
+        tableName.setCellFactory(TextFieldTableCell.forTableColumn());
+        tableSurname.setCellFactory(TextFieldTableCell.forTableColumn());
+        tablePhone.setCellFactory(TextFieldTableCell.forTableColumn());
+        tableNote.setCellFactory(TextFieldTableCell.forTableColumn());
 
+        contactTable.setEditable(true);
 
-        contactTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        contextMenu.getItems().addAll(deleteContact);
-        contactTable.setContextMenu(contextMenu);
+        tableName.setEditable(false);
 
-        //not working yet
         contactTable.setRowFactory(new Callback<TableView<Contact>, TableRow<Contact>>() {
-
             @Override
             public TableRow<Contact> call(TableView<Contact> contactTableView) {
                 final TableRow<Contact> row = new TableRow<>();
                 final ContextMenu rowMenu = new ContextMenu();
-                MenuItem editItem = new MenuItem("Edit");
-                MenuItem removeItem = new MenuItem("Delete");
-                removeItem.setOnAction(new EventHandler<ActionEvent>() {
+                MenuItem editContact = new MenuItem("Edit contact");
+                MenuItem deleteContact = new MenuItem("Delete contact");
+                deleteContact.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
                         contactTable.getItems().remove(row.getItem());
                     }
                 });
-                rowMenu.getItems().addAll(editItem, removeItem);
+                editContact.setOnAction(actionEvent -> showEditContactDialog("Edit"));
+                    //editContact();
 
+                rowMenu.getItems().addAll(editContact, deleteContact);
                 // only display context menu for non-null items:
                 row.contextMenuProperty().bind(Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu)null));
                 return row;
             }
         });
+        
 
 
     }
 
+    @FXML
+    private void showEditContactDialog(String title) {
+        String name = contactTable.getSelectionModel().getSelectedItem().getName();
+        String surname = contactTable.getSelectionModel().getSelectedItem().getSurname();
+        String phone = contactTable.getSelectionModel().getSelectedItem().getPhone();
+        String note = contactTable.getSelectionModel().getSelectedItem().getNote();
+        Contact editContact = new Contact(name, surname, phone, note);
+        ButtonType okButon = ButtonType.OK;
 
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(mainBorderPane.getScene().getWindow());
+        dialog.setTitle(title + " contact");
+        dialog.setHeaderText("Use this dialog to " + title.toLowerCase() + " contact " + name + " " + surname);
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setControllerFactory(c -> {
+            return new EditContactController(okButon, name, surname, phone, note);
+        });
+        fxmlLoader.setLocation(getClass().getResource("editContactDialog.fxml"));
+        try {
+            dialog.getDialogPane().setContent(fxmlLoader.load());
+
+        } catch(IOException e) {
+            System.out.println("Couldn't load the dialog");
+            e.printStackTrace();
+            return;
+        }
+        dialog.getDialogPane().getButtonTypes().add(okButon);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+//        dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+
+//        dialog.show();
+
+        System.out.println(okButon);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+//        if(result.isPresent() && result.get() == ButtonType.OK) {
+//            DialogController controller = fxmlLoader.getController();
+//            TodoItem newItem = controller.processResults();
+//            todoListView.getSelectionModel().select(newItem);
+        }
+
+    private void backgroundButtonEnabling() {
+        PauseTransition checkForErrorFixed = new PauseTransition(Duration.seconds(1));
+        checkForErrorFixed.setOnFinished((e) -> {
+            if (!isAnyFieldFilled() || checkTextFieldsOptions(new Contact())) {
+                showCorrectionInfo("", false);
+            }
+            if (ncMenuButton.isShowing()) {
+                checkForErrorFixed.playFromStart();
+            } else {
+                checkForErrorFixed.stop();
+            }
+        });
+        checkForErrorFixed.play();
+    }
+    
 }
