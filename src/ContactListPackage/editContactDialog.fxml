@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<?import javafx.scene.control.Button?>
+<DialogPane prefHeight="183.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="ContactListPackage.EditContactController">
+    <content>
+        <GridPane hgap="10" maxWidth="400.0" prefWidth="400.0" vgap="10">
+            <Label minHeight="-Infinity" minWidth="-Infinity" text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <TextField fx:id="dialogName" minWidth="-Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label minWidth="-Infinity" text="Surname:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="dialogSurname" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Phone:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <TextField fx:id="dialogPhone" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Note:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextArea fx:id="dialogNote" GridPane.columnIndex="1" GridPane.rowIndex="3" minHeight="100"/>
+        </GridPane>
+    </content>
+</DialogPane>
