@@ -223,7 +223,14 @@ public class Controller {
                 deleteContact.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        contactTable.getItems().remove(row.getItem());
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Delete contact");
+                        alert.setHeaderText("Delete conact: " + row.getItem().getName() + " " + row.getItem().getSurname());
+                        alert.setContentText("Are you sure to delete?");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if(result.isPresent() && (result.get() == ButtonType.OK)) {
+                            contactTable.getItems().remove(row.getItem());
+                        }
                     }
                 });
                 editContact.setOnAction(actionEvent -> showEditContactDialog("Edit"));
