@@ -57,7 +57,7 @@ public class Contact {
             this.note = note;
         } else {
             throw new IllegalArgumentException("Note must have less then 50 characters!");
-        }
+}
     }
 
 

@@ -19,6 +19,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.robot.Robot;
+import javafx.stage.Window;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
@@ -246,15 +247,16 @@ public class Controller {
         String phone = contactTable.getSelectionModel().getSelectedItem().getPhone();
         String note = contactTable.getSelectionModel().getSelectedItem().getNote();
         Contact editContact = new Contact(name, surname, phone, note);
-        ButtonType okButon = ButtonType.OK;
 
-        Dialog<ButtonType> dialog = new Dialog<>();
+        Dialog dialog = new Dialog<>();
         dialog.initOwner(mainBorderPane.getScene().getWindow());
         dialog.setTitle(title + " contact");
         dialog.setHeaderText("Use this dialog to " + title.toLowerCase() + " contact " + name + " " + surname);
+        Window window = dialog.getDialogPane().getScene().getWindow();
+        window.setOnCloseRequest(event -> window.hide());
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setControllerFactory(c -> {
-            return new EditContactController(okButon, name, surname, phone, note);
+            return new EditContactController(editContact);
         });
         fxmlLoader.setLocation(getClass().getResource("editContactDialog.fxml"));
         try {
@@ -265,34 +267,16 @@ public class Controller {
             e.printStackTrace();
             return;
         }
-        dialog.getDialogPane().getButtonTypes().add(okButon);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
-//        dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
 
-//        dialog.show();
 
-        System.out.println(okButon);
 
-        Optional<ButtonType> result = dialog.showAndWait();
+        dialog.show();
 //        if(result.isPresent() && result.get() == ButtonType.OK) {
 //            DialogController controller = fxmlLoader.getController();
 //            TodoItem newItem = controller.processResults();
 //            todoListView.getSelectionModel().select(newItem);
         }
 
-    private void backgroundButtonEnabling() {
-        PauseTransition checkForErrorFixed = new PauseTransition(Duration.seconds(1));
-        checkForErrorFixed.setOnFinished((e) -> {
-            if (!isAnyFieldFilled() || checkTextFieldsOptions(new Contact())) {
-                showCorrectionInfo("", false);
-            }
-            if (ncMenuButton.isShowing()) {
-                checkForErrorFixed.playFromStart();
-            } else {
-                checkForErrorFixed.stop();
-            }
-        });
-        checkForErrorFixed.play();
-    }
+
     
 }
