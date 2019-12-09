@@ -29,11 +29,11 @@
             </center>
             <bottom>
                 <HBox alignment="CENTER_RIGHT" fillHeight="false" maxHeight="10.0">
-                    <Button fx:id="dialogApply" alignment="CENTER_RIGHT" onAction="#processDialog" text="Apply">
+                    <Button fx:id="dialogApply" alignment="CENTER_RIGHT" text="Apply" defaultButton="true">
                   <HBox.margin>
                      <Insets right="15.0" />
                   </HBox.margin></Button>
-                    <Button fx:id="dialogCancel" alignment="CENTER_RIGHT" onAction="#processDialog" text="Cancel" />
+                    <Button fx:id="dialogCancel" alignment="CENTER_RIGHT" text="Cancel" />
                <BorderPane.margin>
                   <Insets top="20.0" />
                </BorderPane.margin>

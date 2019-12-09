@@ -220,23 +220,27 @@ public class Controller {
                 final ContextMenu rowMenu = new ContextMenu();
                 MenuItem editContact = new MenuItem("Edit contact");
                 MenuItem deleteContact = new MenuItem("Delete contact");
+                MenuItem copyContact = new MenuItem("Copy contact");
                 deleteContact.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
+                        System.out.println("Contact table: " + contactTable.getSelectionModel().getFocusedIndex());
+                        System.out.println("Osoba z lista: " + lista.get(contactTable.getSelectionModel().getFocusedIndex()).getName());
                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                         alert.setTitle("Delete contact");
                         alert.setHeaderText("Delete conact: " + row.getItem().getName() + " " + row.getItem().getSurname());
                         alert.setContentText("Are you sure to delete?");
                         Optional<ButtonType> result = alert.showAndWait();
                         if(result.isPresent() && (result.get() == ButtonType.OK)) {
+                            lista.remove(contactTable.getSelectionModel().getFocusedIndex());
                             contactTable.getItems().remove(row.getItem());
                         }
                     }
                 });
                 editContact.setOnAction(actionEvent -> showEditContactDialog("Edit"));
-                    //editContact();
+                copyContact.setOnAction(actionEvent -> showEditContactDialog("Copy"));
 
-                rowMenu.getItems().addAll(editContact, deleteContact);
+                rowMenu.getItems().addAll(editContact, copyContact, deleteContact);
                 // only display context menu for non-null items:
                 row.contextMenuProperty().bind(Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu)null));
                 return row;
@@ -262,9 +266,7 @@ public class Controller {
         Window window = dialog.getDialogPane().getScene().getWindow();
         window.setOnCloseRequest(event -> window.hide());
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setControllerFactory(c -> {
-            return new EditContactController(editContact);
-        });
+        fxmlLoader.setControllerFactory(c -> {return new EditContactController(editContact);});
         fxmlLoader.setLocation(getClass().getResource("editContactDialog.fxml"));
         try {
             dialog.getDialogPane().setContent(fxmlLoader.load());
@@ -274,16 +276,50 @@ public class Controller {
             e.printStackTrace();
             return;
         }
+        EditContactController controller = fxmlLoader.getController();
+        controller.dialogApply.setOnAction(apply -> processApplyDialog(title, controller, window));
+        controller.dialogCancel.setOnAction(hide -> window.hide());
 
 
+        dialog.showAndWait();
 
-        dialog.show();
+
+        //        controller.processDialog();
 //        if(result.isPresent() && result.get() == ButtonType.OK) {
 //            DialogController controller = fxmlLoader.getController();
 //            TodoItem newItem = controller.processResults();
 //            todoListView.getSelectionModel().select(newItem);
         }
 
+        private void processApplyDialog(String title, EditContactController controller, Window window) {
+            switch (title) {
+                case "Edit":
+                    editContact(controller.editContact);
+                    break;
+                case "Copy":
+                    copyContact(controller.editContact);
+                    break;
+                case "Create":
+                    System.out.println("new");
+                    break;
+            }
+            window.hide();
+        }
 
-    
+        private void editContact(Contact editContact) {
+            lista.get(contactTable.getSelectionModel().getFocusedIndex()).setName(editContact.getName());
+            lista.get(contactTable.getSelectionModel().getFocusedIndex()).setSurname(editContact.getSurname());
+            lista.get(contactTable.getSelectionModel().getFocusedIndex()).setPhone(editContact.getPhone());
+            lista.get(contactTable.getSelectionModel().getFocusedIndex()).setNote(editContact.getNote());
+            contactTable.refresh();
+        }
+
+
+        private void copyContact(Contact editContact) {
+            ncPopName.setText(editContact.getName());
+            ncPopSurName.setText((editContact.getSurname()));
+            ncPopPhone.setText(editContact.getPhone());
+            ncPopNote.setText(editContact.getNote());
+            ncApply();
+        }
 }

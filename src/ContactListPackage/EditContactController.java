@@ -18,14 +18,14 @@ import java.util.List;
 
 public class EditContactController {
 
-    @FXML private Button dialogCancel = new Button();
-    @FXML private Button dialogApply = new Button();
+    @FXML public Button dialogCancel;
+    @FXML public Button dialogApply = new Button();
     @FXML private TextField dialogName = new TextField();
     @FXML private TextField dialogSurname = new TextField();
     @FXML private TextField dialogPhone = new TextField();
     @FXML private TextArea dialogNote = new TextArea();
 
-    private Contact editContact;
+    public Contact editContact;
 
 
     public EditContactController(Contact editContact) {
@@ -41,7 +41,6 @@ public class EditContactController {
         dialogPhone.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                System.out.println("old " + oldValue + ", new " + newValue);
                 if (!newValue.matches("\\d*")) {
                     dialogPhone.setText(newValue.replaceAll("[^\\d]", ""));
                 }
@@ -61,25 +60,16 @@ public class EditContactController {
 
     }
 
-    public Contact passNewValues(){
 
-        System.out.println(dialogNote.getParent());
-//        dialogNote.getScene().getWindow();
-        return new Contact(dialogName.getText(), dialogSurname.getText(),
-                                             dialogPhone.getText(), dialogNote.getText());
-
-    }
-
-
-    public void processDialog(ActionEvent actionEvent) {
-        Button pressed = (Button) actionEvent.getSource();
-        if (pressed.getId().equals(dialogApply.getId())) {
-            System.out.println("Apply pressed");
-        }
-        Stage dial = (Stage) dialogApply.getParent().getScene().getWindow();
-        dial.close();
-
-    }
+//    public void processDialog(ActionEvent actionEvent) {
+//        Button pressed = (Button) actionEvent.getSource();
+//        if (pressed.getId().equals(dialogApply.getId())) {
+//            System.out.println("Apply pressed");
+//        }
+//        Stage dial = (Stage) dialogApply.getParent().getScene().getWindow();
+//        dial.close();
+//
+//    }
 
     private void backgroundButtonEnabling() {
         Tooltip tooltip = new Tooltip();
