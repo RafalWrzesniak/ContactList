@@ -28,7 +28,7 @@
    <top>
       <ButtonBar maxWidth="-Infinity" BorderPane.alignment="TOP_LEFT">
         <buttons>
-            <MenuButton fx:id="ncMenuButton" mnemonicParsing="false" onMouseReleased="#backgroundErrorChecking" text="New contact">
+            <MenuButton fx:id="ncMenuButton" mnemonicParsing="false" text="New contact">
               <items>
                 <MenuItem id="nameMenuItem" mnemonicParsing="false">
                      <graphic>
@@ -41,7 +41,7 @@
                   </MenuItem>
                 <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField fx:id="ncPopSurName" onKeyPressed="#handleKeyEvents" promptText="Surname" prefWidth="181.0">
+                        <TextField fx:id="ncPopSurName" onKeyPressed="#handleKeyEvents" prefWidth="181.0" promptText="Surname">
                              <tooltip>
                                  <Tooltip style="-fx-font: normal 14 Langdon;" text="Surname must have more then 3 and less then 25 characters!" />
                              </tooltip>
@@ -50,7 +50,7 @@
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField fx:id="ncPopPhone" onKeyPressed="#handleKeyEvents" promptText="Phone" prefWidth="181.0">
+                        <TextField fx:id="ncPopPhone" onKeyPressed="#handleKeyEvents" prefWidth="181.0" promptText="Phone">
                              <tooltip>
                                  <Tooltip style="-fx-font: normal 14 Langdon;" text="Phone must have 9 digits" />
                              </tooltip>
@@ -59,7 +59,7 @@
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField fx:id="ncPopNote" onKeyPressed="#handleKeyEvents" promptText="Note" prefWidth="181.0">
+                        <TextField fx:id="ncPopNote" onKeyPressed="#handleKeyEvents" prefWidth="181.0" promptText="Note">
                              <tooltip>
                                  <Tooltip style="-fx-font: normal 14 Langdon;" text="Note must have less then 50 characters!" />
                              </tooltip>

@@ -7,8 +7,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -20,7 +18,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.robot.Robot;
 import javafx.stage.Window;
-import javafx.util.Callback;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -51,6 +48,7 @@ public class Controller {
     private Contact th = new Contact("Someone", "Else", "789789789", "Here");
     private ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf, th);
     private Robot tabPresser = new Robot();
+    private boolean shouldBeRunning = true;
 
     public void initialize() {
         tableName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -61,9 +59,14 @@ public class Controller {
 
         clearAllButton.setOnMouseReleased(actionEvent -> ncMenuButton.show());
         ncApplyButton.setOnMouseReleased(actionEvent -> showMenuAfterError());
+        ncMenuButton.setOnMouseReleased(actionEvent -> backgroundErrorChecking());
         anchor.setPrefHeight(44);
         anchor.setPrefWidth(0);
         labelka.setVisible(false);
+        final TranslateTransition initTransLabel = new TranslateTransition(Duration.millis(10), anchor);
+        initTransLabel.setFromY(0);
+        initTransLabel.setToY(44);
+        initTransLabel.play();
 
         tableName.setCellFactory(TextFieldTableCell.forTableColumn());
         tableSurname.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -73,56 +76,46 @@ public class Controller {
         contactTable.setEditable(true);
         tableName.setEditable(false);
 
-        contactTable.setRowFactory(new Callback<TableView<Contact>, TableRow<Contact>>() {
-            @Override
-            public TableRow<Contact> call(TableView<Contact> contactTableView) {
-                final TableRow<Contact> row = new TableRow<>();
-                final ContextMenu rowMenu = new ContextMenu();
-                MenuItem editContact = new MenuItem("Edit contact");
-                MenuItem deleteContact = new MenuItem("Delete contact");
-                MenuItem copyContact = new MenuItem("Copy contact");
-                deleteContact.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        System.out.println("Contact table: " + contactTable.getSelectionModel().getFocusedIndex());
-                        System.out.println("Osoba z lista: " + lista.get(contactTable.getSelectionModel().getFocusedIndex()).getName());
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Delete contact");
-                        alert.setHeaderText("Delete conact: " + row.getItem().getName() + " " + row.getItem().getSurname());
-                        alert.setContentText("Are you sure to delete?");
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if(result.isPresent() && (result.get() == ButtonType.OK)) {
-                            lista.remove(contactTable.getSelectionModel().getFocusedIndex());
-                            contactTable.getItems().remove(row.getItem());
-                        }
-                    }
-                });
-                editContact.setOnAction(actionEvent -> showEditContactDialog("Edit"));
-                copyContact.setOnAction(actionEvent -> showEditContactDialog("Copy"));
-                createNewContact.setOnAction(actionEvent -> showEditContactDialog("Create"));
+        contactTable.setRowFactory(contactTableView -> {
+            final TableRow<Contact> row = new TableRow<>();
+            final ContextMenu rowMenu = new ContextMenu();
+            MenuItem editContact = new MenuItem("Edit contact");
+            MenuItem deleteContact = new MenuItem("Delete contact");
+            MenuItem copyContact = new MenuItem("Copy contact");
+            deleteContact.setOnAction(event -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Delete contact");
+                alert.setHeaderText("Delete conact: " + row.getItem().getName() + " " + row.getItem().getSurname());
+                alert.setContentText("Are you sure to delete?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isPresent() && (result.get() == ButtonType.OK)) {
+                    lista.remove(contactTable.getSelectionModel().getFocusedIndex());
+                    contactTable.getItems().remove(row.getItem());
+                    infoBanner("Contact " + contactTable.getSelectionModel().getSelectedItem().getName()
+                            + " " + contactTable.getSelectionModel().getSelectedItem().getSurname() + " removed", "orange");
+                }
+            });
+            editContact.setOnAction(actionEvent -> showEditContactDialog("Edit"));
+            copyContact.setOnAction(actionEvent -> showEditContactDialog("Copy"));
+            createNewContact.setOnAction(actionEvent -> showEditContactDialog("Create"));
 
-                rowMenu.getItems().addAll(editContact, copyContact, deleteContact);
-                // only display context menu for non-null items:
-                row.contextMenuProperty().bind(Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu)null));
-                return row;
-            }
+            rowMenu.getItems().addAll(editContact, copyContact, deleteContact);
+            // only display context menu for non-null items:
+            row.contextMenuProperty().bind(Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu) null));
+            return row;
         });
     }
 
     @FXML
     private void ncApply() {
-//        Contact newContact = new Contact();
-//        if (checkTextFieldsOptions(newContact)){
+        shouldBeRunning = false;
         if(isAnyFieldFilled()){
             Contact newContact = new Contact(ncPopName.getText(), ncPopSurName.getText(),
                     ncPopPhone.getText(), ncPopNote.getText());
-            lista.add(newContact);
-            contactTable.setItems(lista);
-
-            contactTable.refresh();
             clearNcFields();
             tabPresser.keyPress(KeyCode.ESCAPE);
             extendColumnWidth();
+            addContact(newContact);
         }
     }
 
@@ -137,12 +130,15 @@ public class Controller {
 
     @FXML
     private void backgroundErrorChecking() {
-        PauseTransition checkForErrorFixed = new PauseTransition(Duration.seconds(1));
+        shouldBeRunning = true;
+        PauseTransition checkForErrorFixed = new PauseTransition(Duration.millis(500));
         checkForErrorFixed.setOnFinished((e) -> {
-            if(!isAnyFieldFilled() || checkTextFieldsOptions(new Contact())) {
-                showCorrectionInfo("", false);
+            if((!isAnyFieldFilled() || checkTextFieldsOptions(new Contact())) && labelka.isVisible() && shouldBeRunning && ncApplyButton.isDisabled()) {
+                showCorrectionInfo("", false, "red");
+                ncApplyButton.setDisable(false);
             }
-            if(ncMenuButton.isShowing()){
+
+            if(shouldBeRunning){
                 checkForErrorFixed.playFromStart();
             } else {
                 checkForErrorFixed.stop();
@@ -150,6 +146,26 @@ public class Controller {
         });
         checkForErrorFixed.play();
     }
+
+    private void showCorrectionInfo(String infoText, boolean showHide, String color){
+        final TranslateTransition translateLabel = new TranslateTransition(Duration.millis(750), anchor);
+        if (showHide) {
+            if(!labelka.isVisible() || !labelka.getText().equals(infoText)){
+                labelka.setText(infoText);
+                labelka.setVisible(true);
+                labelka.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-background-color: " + color);
+                translateLabel.setFromY(44);
+                translateLabel.setToY(0);
+                translateLabel.play();
+            }
+        } else if(labelka.isVisible()){
+            translateLabel.setFromY(0);
+            translateLabel.setToY(44);
+            translateLabel.setOnFinished(actionEvent -> labelka.setVisible(false));
+            translateLabel.play();
+        }
+    }
+
 
     @FXML
     public void clearNcFields() {
@@ -187,6 +203,7 @@ public class Controller {
 
     @FXML
     private void showEditContactDialog(String title) {
+        shouldBeRunning = false;
         Contact tempContact;
         if (!title.equals("Create")) {
             String name = contactTable.getSelectionModel().getSelectedItem().getName();
@@ -219,27 +236,8 @@ public class Controller {
         controller.dialogApply.setOnAction(apply -> processApplyDialog(title, controller, window));
         controller.dialogCancel.setOnAction(hide -> window.hide());
 
-
         dialog.showAndWait();
 
-    }
-
-    private void showCorrectionInfo(String infoText, boolean showHide){
-        final TranslateTransition translateLabel = new TranslateTransition(Duration.millis(750), anchor);
-        if (showHide) {
-            if(!labelka.isVisible() && !translateLabel.getStatus().equals(Animation.Status.RUNNING)){
-                labelka.setText(infoText);
-                labelka.setVisible(true);
-                translateLabel.setFromY(44);
-                translateLabel.setToY(0);
-                translateLabel.play();
-            }
-        } else if(labelka.isVisible() && !translateLabel.getStatus().equals(Animation.Status.RUNNING)){
-            translateLabel.setFromY(0);
-            translateLabel.setToY(44);
-            translateLabel.setOnFinished(actionEvent -> labelka.setVisible(false));
-            translateLabel.play();
-        }
     }
 
     private boolean checkTextFieldsOptions(Contact newContact) {
@@ -252,7 +250,8 @@ public class Controller {
                 return true;
             } catch (IllegalArgumentException e) {
 //                System.out.println(e.getMessage());
-                showCorrectionInfo(e.getMessage(), true);
+                showCorrectionInfo(e.getMessage(), true, "red");
+                ncApplyButton.setDisable(true);
             }
         }
         return false;
@@ -266,7 +265,6 @@ public class Controller {
 
     private void showMenuAfterError() {
         if (labelka.isVisible()) {
-            System.out.println("menu error should be shown");
             ncMenuButton.show();
         }
     }
@@ -294,12 +292,17 @@ public class Controller {
                     copyContact(controller.editContact);
                     break;
                 case "Create":
-                    lista.add(new Contact(controller.editContact.getName(), controller.editContact.getSurname(),
-                            controller.editContact.getPhone(), controller.editContact.getNote()));
-                    contactTable.refresh();
+                    addContact(controller.editContact);
                     break;
             }
             window.hide();
+        }
+
+        private void addContact(Contact editContact) {
+            lista.add(new Contact(editContact.getName(), editContact.getSurname(), editContact.getPhone(), editContact.getNote()));
+            contactTable.refresh();
+            infoBanner("New contact " + editContact.getName() + " " + editContact.getSurname() + " created", "green");
+
         }
 
         private void editContact(Contact editContact) {
@@ -308,6 +311,7 @@ public class Controller {
             lista.get(contactTable.getSelectionModel().getFocusedIndex()).setPhone(editContact.getPhone());
             lista.get(contactTable.getSelectionModel().getFocusedIndex()).setNote(editContact.getNote());
             contactTable.refresh();
+            infoBanner("Contact " + editContact.getName() + " " + editContact.getSurname() + " edited", "orange");
         }
 
 
@@ -317,5 +321,15 @@ public class Controller {
             ncPopPhone.setText(editContact.getPhone());
             ncPopNote.setText(editContact.getNote());
             ncApply();
+            infoBanner("Contact " + editContact.getName() + " " + editContact.getSurname() + " copied", "orange");
         }
+
+        private void infoBanner(String text, String color){
+            showCorrectionInfo(text, true, color);
+            PauseTransition showInfo = new PauseTransition(Duration.seconds(4));
+            showInfo.setOnFinished((e) -> showCorrectionInfo(text, false, color));
+            showInfo.play();
+
+        }
+
 }
