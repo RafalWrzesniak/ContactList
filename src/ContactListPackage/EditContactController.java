@@ -60,17 +60,6 @@ public class EditContactController {
 
     }
 
-
-//    public void processDialog(ActionEvent actionEvent) {
-//        Button pressed = (Button) actionEvent.getSource();
-//        if (pressed.getId().equals(dialogApply.getId())) {
-//            System.out.println("Apply pressed");
-//        }
-//        Stage dial = (Stage) dialogApply.getParent().getScene().getWindow();
-//        dial.close();
-//
-//    }
-
     private void backgroundButtonEnabling() {
         Tooltip tooltip = new Tooltip();
         tooltip.setFont(Font.font(13));

@@ -28,6 +28,7 @@ import java.util.Optional;
 
 public class Controller {
 
+    @FXML private Button createNewContact = new Button();
     @FXML private Button clearAllButton = new Button();
     @FXML private Button ncApplyButton = new Button();
     @FXML private MenuButton ncMenuButton = new MenuButton();
@@ -44,71 +45,68 @@ public class Controller {
     @FXML public TextField ncPopPhone;
     @FXML public TextField ncPopNote;
 
-    @FXML
-    public void exitProgram() {
-        Platform.exit();
-    }
 
-    @FXML private void contextMenuHandler(){
-        System.out.println(45);
-    }
+    private Contact kl = new Contact("Klaudia", "Johns", "123123123", "girl");
+    private Contact rf = new Contact("Rafał", "Wick", "456456456", "boy");
+    private Contact th = new Contact("Someone", "Else", "789789789", "Here");
+    private ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf, th);
+    private Robot tabPresser = new Robot();
 
-    @FXML
-    public void showHelpDialog() {
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.initOwner(mainBorderPane.getScene().getWindow());
-        dialog.setTitle("Help");
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("HelpWindow.fxml"));
-        try {
-            dialog.getDialogPane().setContent(fxmlLoader.load());
+    public void initialize() {
+        tableName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tableSurname.setCellValueFactory(new PropertyValueFactory<>("surname"));
+        tablePhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        tableNote.setCellValueFactory(new PropertyValueFactory<>("note"));
+        contactTable.setItems(lista);
 
-        } catch(IOException e) {
-            System.out.println("Couldn't load the dialog");
-            e.printStackTrace();
-            return;
-        }
+        clearAllButton.setOnMouseReleased(actionEvent -> ncMenuButton.show());
+        ncApplyButton.setOnMouseReleased(actionEvent -> showMenuAfterError());
+        anchor.setPrefHeight(44);
+        anchor.setPrefWidth(0);
+        labelka.setVisible(false);
 
-        dialog.getDialogPane().getButtonTypes().add(new ButtonType("Run away from here", ButtonBar.ButtonData.CANCEL_CLOSE));
-        dialog.show();
-    }
+        tableName.setCellFactory(TextFieldTableCell.forTableColumn());
+        tableSurname.setCellFactory(TextFieldTableCell.forTableColumn());
+        tablePhone.setCellFactory(TextFieldTableCell.forTableColumn());
+        tableNote.setCellFactory(TextFieldTableCell.forTableColumn());
 
-    private void showCorrectionInfo(String infoText, boolean showHide){
-        final TranslateTransition translateLabel = new TranslateTransition(Duration.millis(750), anchor);
-        if (showHide) {
-            if(!labelka.isVisible() && !translateLabel.getStatus().equals(Animation.Status.RUNNING)){
-                labelka.setText(infoText);
-                labelka.setVisible(true);
-                translateLabel.setFromY(44);
-                translateLabel.setToY(0);
-                translateLabel.play();
+        contactTable.setEditable(true);
+        tableName.setEditable(false);
+
+        contactTable.setRowFactory(new Callback<TableView<Contact>, TableRow<Contact>>() {
+            @Override
+            public TableRow<Contact> call(TableView<Contact> contactTableView) {
+                final TableRow<Contact> row = new TableRow<>();
+                final ContextMenu rowMenu = new ContextMenu();
+                MenuItem editContact = new MenuItem("Edit contact");
+                MenuItem deleteContact = new MenuItem("Delete contact");
+                MenuItem copyContact = new MenuItem("Copy contact");
+                deleteContact.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        System.out.println("Contact table: " + contactTable.getSelectionModel().getFocusedIndex());
+                        System.out.println("Osoba z lista: " + lista.get(contactTable.getSelectionModel().getFocusedIndex()).getName());
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Delete contact");
+                        alert.setHeaderText("Delete conact: " + row.getItem().getName() + " " + row.getItem().getSurname());
+                        alert.setContentText("Are you sure to delete?");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if(result.isPresent() && (result.get() == ButtonType.OK)) {
+                            lista.remove(contactTable.getSelectionModel().getFocusedIndex());
+                            contactTable.getItems().remove(row.getItem());
+                        }
+                    }
+                });
+                editContact.setOnAction(actionEvent -> showEditContactDialog("Edit"));
+                copyContact.setOnAction(actionEvent -> showEditContactDialog("Copy"));
+                createNewContact.setOnAction(actionEvent -> showEditContactDialog("Create"));
+
+                rowMenu.getItems().addAll(editContact, copyContact, deleteContact);
+                // only display context menu for non-null items:
+                row.contextMenuProperty().bind(Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu)null));
+                return row;
             }
-        } else if(labelka.isVisible() && !translateLabel.getStatus().equals(Animation.Status.RUNNING)){
-            translateLabel.setFromY(0);
-            translateLabel.setToY(44);
-            translateLabel.setOnFinished(actionEvent -> labelka.setVisible(false));
-            translateLabel.play();
-        }
-    }
-    private boolean checkTextFieldsOptions(Contact newContact) {
-        if (isAnyFieldFilled()) {
-            try {
-                newContact.setName(ncPopName.getText());
-                newContact.setSurname(ncPopSurName.getText());
-                newContact.setPhone(ncPopPhone.getText());
-                newContact.setNote(ncPopNote.getText());
-                return true;
-            } catch (IllegalArgumentException e) {
-//                System.out.println(e.getMessage());
-                showCorrectionInfo(e.getMessage(), true);
-            }
-        }
-        return false;
-    }
-
-    private boolean isAnyFieldFilled() {
-        return (!ncPopName.getText().trim().isEmpty() || !ncPopSurName.getText().trim().isEmpty() ||
-                !ncPopPhone.getText().trim().isEmpty() || !ncPopNote.getText().trim().isEmpty());
+        });
     }
 
     @FXML
@@ -117,7 +115,7 @@ public class Controller {
 //        if (checkTextFieldsOptions(newContact)){
         if(isAnyFieldFilled()){
             Contact newContact = new Contact(ncPopName.getText(), ncPopSurName.getText(),
-                                             ncPopPhone.getText(), ncPopNote.getText());
+                    ncPopPhone.getText(), ncPopNote.getText());
             lista.add(newContact);
             contactTable.setItems(lista);
 
@@ -128,8 +126,6 @@ public class Controller {
         }
     }
 
-
-    private Robot tabPresser = new Robot();
     @FXML
     private void handleKeyEvents(KeyEvent keyEvent) {
         if(keyEvent.getCode() == KeyCode.ENTER) {
@@ -163,110 +159,53 @@ public class Controller {
         ncPopNote.clear();
     }
 
-    private void showMenuAfterError() {
-        if (labelka.isVisible()) {
-            System.out.println("menu error should be shown");
-            ncMenuButton.show();
-        }
+    @FXML
+    public void exitProgram() {
+        Platform.exit();
     }
 
-    private void extendColumnWidth() {
-        String testingCellVaule;
-        int longestValue = 0;
-        for (int column = 0; column < 4; column++) {
-            for (int row = 0; row < lista.size(); row++) {
-                testingCellVaule = contactTable.getColumns().get(column).getCellObservableValue(row).getValue().toString();
-                if(testingCellVaule.length() > longestValue) longestValue = testingCellVaule.length();
-            }
-            if(longestValue > 17) contactTable.getColumns().get(column).setPrefWidth(130);
-            if(longestValue > 30) contactTable.getColumns().get(column).setPrefWidth(160);
-            longestValue = 0;
+
+    @FXML
+    public void showHelpDialog() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(mainBorderPane.getScene().getWindow());
+        dialog.setTitle("Help");
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(getClass().getResource("HelpWindow.fxml"));
+        try {
+            dialog.getDialogPane().setContent(fxmlLoader.load());
+
+        } catch(IOException e) {
+            System.out.println("Couldn't load the dialog");
+            e.printStackTrace();
+            return;
         }
-    }
 
-    private Contact kl = new Contact("Klaudia", "Johns", "123123123", "girl");
-    private Contact rf = new Contact("Rafał", "Wick", "456456456", "boy");
-    private ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf);
-    private Contact th = new Contact("Someone", "Else", "789789789", "Here");
-
-    public void initialize() {
-        tableName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tableSurname.setCellValueFactory(new PropertyValueFactory<>("surname"));
-        tablePhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        tableNote.setCellValueFactory(new PropertyValueFactory<>("note"));
-        lista.add(th);
-        contactTable.setItems(lista);
-
-        clearAllButton.setOnMouseReleased(actionEvent -> ncMenuButton.show());
-        ncApplyButton.setOnMouseReleased(actionEvent -> showMenuAfterError());
-        anchor.setPrefHeight(44);
-        anchor.setPrefWidth(0);
-        labelka.setVisible(false);
-
-
-        tableName.setCellFactory(TextFieldTableCell.forTableColumn());
-        tableSurname.setCellFactory(TextFieldTableCell.forTableColumn());
-        tablePhone.setCellFactory(TextFieldTableCell.forTableColumn());
-        tableNote.setCellFactory(TextFieldTableCell.forTableColumn());
-
-        contactTable.setEditable(true);
-
-        tableName.setEditable(false);
-
-        contactTable.setRowFactory(new Callback<TableView<Contact>, TableRow<Contact>>() {
-            @Override
-            public TableRow<Contact> call(TableView<Contact> contactTableView) {
-                final TableRow<Contact> row = new TableRow<>();
-                final ContextMenu rowMenu = new ContextMenu();
-                MenuItem editContact = new MenuItem("Edit contact");
-                MenuItem deleteContact = new MenuItem("Delete contact");
-                MenuItem copyContact = new MenuItem("Copy contact");
-                deleteContact.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        System.out.println("Contact table: " + contactTable.getSelectionModel().getFocusedIndex());
-                        System.out.println("Osoba z lista: " + lista.get(contactTable.getSelectionModel().getFocusedIndex()).getName());
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Delete contact");
-                        alert.setHeaderText("Delete conact: " + row.getItem().getName() + " " + row.getItem().getSurname());
-                        alert.setContentText("Are you sure to delete?");
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if(result.isPresent() && (result.get() == ButtonType.OK)) {
-                            lista.remove(contactTable.getSelectionModel().getFocusedIndex());
-                            contactTable.getItems().remove(row.getItem());
-                        }
-                    }
-                });
-                editContact.setOnAction(actionEvent -> showEditContactDialog("Edit"));
-                copyContact.setOnAction(actionEvent -> showEditContactDialog("Copy"));
-
-                rowMenu.getItems().addAll(editContact, copyContact, deleteContact);
-                // only display context menu for non-null items:
-                row.contextMenuProperty().bind(Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu)null));
-                return row;
-            }
-        });
-        
-
-
+        dialog.getDialogPane().getButtonTypes().add(new ButtonType("Run away from here", ButtonBar.ButtonData.CANCEL_CLOSE));
+        dialog.show();
     }
 
     @FXML
     private void showEditContactDialog(String title) {
-        String name = contactTable.getSelectionModel().getSelectedItem().getName();
-        String surname = contactTable.getSelectionModel().getSelectedItem().getSurname();
-        String phone = contactTable.getSelectionModel().getSelectedItem().getPhone();
-        String note = contactTable.getSelectionModel().getSelectedItem().getNote();
-        Contact editContact = new Contact(name, surname, phone, note);
+        Contact tempContact;
+        if (!title.equals("Create")) {
+            String name = contactTable.getSelectionModel().getSelectedItem().getName();
+            String surname = contactTable.getSelectionModel().getSelectedItem().getSurname();
+            String phone = contactTable.getSelectionModel().getSelectedItem().getPhone();
+            String note = contactTable.getSelectionModel().getSelectedItem().getNote();
+            tempContact = new Contact(name, surname, phone, note);
+        } else {
+            tempContact = new Contact("", "", "", "");
+        }
 
         Dialog dialog = new Dialog<>();
         dialog.initOwner(mainBorderPane.getScene().getWindow());
         dialog.setTitle(title + " contact");
-        dialog.setHeaderText("Use this dialog to " + title.toLowerCase() + " contact " + name + " " + surname);
+        dialog.setHeaderText("Use this dialog to " + title.toLowerCase() + " contact " + tempContact.getName() + " " + tempContact.getSurname());
         Window window = dialog.getDialogPane().getScene().getWindow();
         window.setOnCloseRequest(event -> window.hide());
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setControllerFactory(c -> {return new EditContactController(editContact);});
+        fxmlLoader.setControllerFactory(c -> new EditContactController(tempContact));
         fxmlLoader.setLocation(getClass().getResource("editContactDialog.fxml"));
         try {
             dialog.getDialogPane().setContent(fxmlLoader.load());
@@ -283,13 +222,68 @@ public class Controller {
 
         dialog.showAndWait();
 
+    }
 
-        //        controller.processDialog();
-//        if(result.isPresent() && result.get() == ButtonType.OK) {
-//            DialogController controller = fxmlLoader.getController();
-//            TodoItem newItem = controller.processResults();
-//            todoListView.getSelectionModel().select(newItem);
+    private void showCorrectionInfo(String infoText, boolean showHide){
+        final TranslateTransition translateLabel = new TranslateTransition(Duration.millis(750), anchor);
+        if (showHide) {
+            if(!labelka.isVisible() && !translateLabel.getStatus().equals(Animation.Status.RUNNING)){
+                labelka.setText(infoText);
+                labelka.setVisible(true);
+                translateLabel.setFromY(44);
+                translateLabel.setToY(0);
+                translateLabel.play();
+            }
+        } else if(labelka.isVisible() && !translateLabel.getStatus().equals(Animation.Status.RUNNING)){
+            translateLabel.setFromY(0);
+            translateLabel.setToY(44);
+            translateLabel.setOnFinished(actionEvent -> labelka.setVisible(false));
+            translateLabel.play();
         }
+    }
+
+    private boolean checkTextFieldsOptions(Contact newContact) {
+        if (isAnyFieldFilled()) {
+            try {
+                newContact.setName(ncPopName.getText());
+                newContact.setSurname(ncPopSurName.getText());
+                newContact.setPhone(ncPopPhone.getText());
+                newContact.setNote(ncPopNote.getText());
+                return true;
+            } catch (IllegalArgumentException e) {
+//                System.out.println(e.getMessage());
+                showCorrectionInfo(e.getMessage(), true);
+            }
+        }
+        return false;
+    }
+
+    private boolean isAnyFieldFilled() {
+        return (!ncPopName.getText().trim().isEmpty() || !ncPopSurName.getText().trim().isEmpty() ||
+                !ncPopPhone.getText().trim().isEmpty() || !ncPopNote.getText().trim().isEmpty());
+    }
+
+
+    private void showMenuAfterError() {
+        if (labelka.isVisible()) {
+            System.out.println("menu error should be shown");
+            ncMenuButton.show();
+        }
+    }
+
+    private void extendColumnWidth() {
+        String testingCellValue;
+        int longestValue = 0;
+        for (int column = 0; column < 4; column++) {
+            for (int row = 0; row < lista.size(); row++) {
+                testingCellValue = contactTable.getColumns().get(column).getCellObservableValue(row).getValue().toString();
+                if(testingCellValue.length() > longestValue) longestValue = testingCellValue.length();
+            }
+            if(longestValue > 17) contactTable.getColumns().get(column).setPrefWidth(130);
+            if(longestValue > 30) contactTable.getColumns().get(column).setPrefWidth(160);
+            longestValue = 0;
+        }
+    }
 
         private void processApplyDialog(String title, EditContactController controller, Window window) {
             switch (title) {
@@ -300,7 +294,9 @@ public class Controller {
                     copyContact(controller.editContact);
                     break;
                 case "Create":
-                    System.out.println("new");
+                    lista.add(new Contact(controller.editContact.getName(), controller.editContact.getSurname(),
+                            controller.editContact.getPhone(), controller.editContact.getNote()));
+                    contactTable.refresh();
                     break;
             }
             window.hide();

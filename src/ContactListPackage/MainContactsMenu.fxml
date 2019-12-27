@@ -18,21 +18,21 @@
    <center>
       <TableView fx:id="contactTable" prefHeight="365.0" prefWidth="496.0" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn fx:id="tableName" prefWidth="100" minWidth="50" text="Name" />
-          <TableColumn fx:id="tableSurname" prefWidth="100" minWidth="60" text="Surname" />
-          <TableColumn fx:id="tablePhone" prefWidth="100" minWidth="50" text="Phone" />
-          <TableColumn fx:id="tableNote" prefWidth="100" minWidth="50" text="Note" />
+          <TableColumn fx:id="tableName" minWidth="50" prefWidth="100" text="Name" />
+          <TableColumn fx:id="tableSurname" minWidth="60" prefWidth="100" text="Surname" />
+          <TableColumn fx:id="tablePhone" minWidth="50" prefWidth="100" text="Phone" />
+          <TableColumn fx:id="tableNote" minWidth="50" prefWidth="100" text="Note" />
         </columns>
       </TableView>
    </center>
    <top>
       <ButtonBar maxWidth="-Infinity" BorderPane.alignment="TOP_LEFT">
         <buttons>
-            <MenuButton fx:id="ncMenuButton" mnemonicParsing="false" text="New contact" onMouseReleased="#backgroundErrorChecking">
+            <MenuButton fx:id="ncMenuButton" mnemonicParsing="false" onMouseReleased="#backgroundErrorChecking" text="New contact">
               <items>
-                <MenuItem mnemonicParsing="false" id="nameMenuItem">
+                <MenuItem id="nameMenuItem" mnemonicParsing="false">
                      <graphic>
-                        <TextField fx:id="ncPopName" onKeyPressed="#handleKeyEvents" promptText="Name">
+                        <TextField fx:id="ncPopName" onKeyPressed="#handleKeyEvents" prefWidth="181.0" promptText="Name">
                             <tooltip>
                                 <Tooltip style="-fx-font: normal 14 Langdon;" text="Name must have more then 2 and less then 15 characters" />
                             </tooltip>
@@ -41,7 +41,7 @@
                   </MenuItem>
                 <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField fx:id="ncPopSurName" onKeyPressed="#handleKeyEvents" promptText="Surname" >
+                        <TextField fx:id="ncPopSurName" onKeyPressed="#handleKeyEvents" promptText="Surname" prefWidth="181.0">
                              <tooltip>
                                  <Tooltip style="-fx-font: normal 14 Langdon;" text="Surname must have more then 3 and less then 25 characters!" />
                              </tooltip>
@@ -50,7 +50,7 @@
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField fx:id="ncPopPhone" onKeyPressed="#handleKeyEvents" promptText="Phone">
+                        <TextField fx:id="ncPopPhone" onKeyPressed="#handleKeyEvents" promptText="Phone" prefWidth="181.0">
                              <tooltip>
                                  <Tooltip style="-fx-font: normal 14 Langdon;" text="Phone must have 9 digits" />
                              </tooltip>
@@ -59,7 +59,7 @@
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <TextField fx:id="ncPopNote" onKeyPressed="#handleKeyEvents" promptText="Note" >
+                        <TextField fx:id="ncPopNote" onKeyPressed="#handleKeyEvents" promptText="Note" prefWidth="181.0">
                              <tooltip>
                                  <Tooltip style="-fx-font: normal 14 Langdon;" text="Note must have less then 50 characters!" />
                              </tooltip>
@@ -68,10 +68,11 @@
                   </MenuItem>
                   <MenuItem mnemonicParsing="false">
                      <graphic>
-                        <HBox spacing="43">
+                        <HBox spacing="10">
                            <children>
                                <Button fx:id="ncApplyButton" defaultButton="true" onAction="#ncApply" text="Apply" />
                                <Button fx:id="clearAllButton" onAction="#clearNcFields" text="Clear all" />
+                               <Button fx:id="createNewContact" text="Create.." />
                            </children>
                         </HBox>
                      </graphic>
