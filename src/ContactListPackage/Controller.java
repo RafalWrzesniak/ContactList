@@ -1,6 +1,5 @@
 package ContactListPackage;
 
-import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -31,24 +30,25 @@ public class Controller {
     @FXML private MenuButton ncMenuButton = new MenuButton();
     @FXML private AnchorPane anchor = new AnchorPane();
     @FXML private Label labelka = new Label();
-    @FXML private BorderPane mainBorderPane = new BorderPane();
+    @FXML public BorderPane mainBorderPane = new BorderPane();
     @FXML private TableView<Contact> contactTable = new TableView<>();
     @FXML private TableColumn<Contact, String> tableName = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tableSurname = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tablePhone = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tableNote = new TableColumn<>();
-    @FXML public TextField ncPopName;
-    @FXML public TextField ncPopSurName;
-    @FXML public TextField ncPopPhone;
-    @FXML public TextField ncPopNote;
+    @FXML private TextField ncPopName;
+    @FXML private TextField ncPopSurName;
+    @FXML private TextField ncPopPhone;
+    @FXML private TextField ncPopNote;
 
 
     private Contact kl = new Contact("Klaudia", "Johns", "123123123", "girl");
     private Contact rf = new Contact("Rafał", "Wick", "456456456", "boy");
     private Contact th = new Contact("Someone", "Else", "789789789", "Here");
-    private ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf, th);
     private Robot tabPresser = new Robot();
     private boolean shouldBeRunning = true;
+    public ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf, th);
+
 
     public void initialize() {
         tableName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -63,6 +63,7 @@ public class Controller {
         anchor.setPrefHeight(44);
         anchor.setPrefWidth(0);
         labelka.setVisible(false);
+
         final TranslateTransition initTransLabel = new TranslateTransition(Duration.millis(10), anchor);
         initTransLabel.setFromY(0);
         initTransLabel.setToY(44);
@@ -104,6 +105,7 @@ public class Controller {
             row.contextMenuProperty().bind(Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu) null));
             return row;
         });
+
     }
 
     @FXML
@@ -168,7 +170,7 @@ public class Controller {
 
 
     @FXML
-    public void clearNcFields() {
+    private void clearNcFields() {
         ncPopName.clear();
         ncPopSurName.clear();
         ncPopPhone.clear();
@@ -176,13 +178,14 @@ public class Controller {
     }
 
     @FXML
-    public void exitProgram() {
+    private void exitProgram() {
         Platform.exit();
+//        IOoperations.writeData(new Contact("próba", "numer 2", "", ""));
     }
 
 
     @FXML
-    public void showHelpDialog() {
+    private void showHelpDialog() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(mainBorderPane.getScene().getWindow());
         dialog.setTitle("Help");
@@ -235,6 +238,7 @@ public class Controller {
         EditContactController controller = fxmlLoader.getController();
         controller.dialogApply.setOnAction(apply -> processApplyDialog(title, controller, window));
         controller.dialogCancel.setOnAction(hide -> window.hide());
+        controller.asd();
 
         dialog.showAndWait();
 
@@ -298,10 +302,11 @@ public class Controller {
             window.hide();
         }
 
-        private void addContact(Contact editContact) {
-            lista.add(new Contact(editContact.getName(), editContact.getSurname(), editContact.getPhone(), editContact.getNote()));
+        private void addContact(Contact newContact) {
+            lista.add(newContact);
             contactTable.refresh();
-            infoBanner("New contact " + editContact.getName() + " " + editContact.getSurname() + " created", "green");
+            IOoperations.writeData(newContact);
+            infoBanner("New contact " + newContact.getName() + " " + newContact.getSurname() + " created", "green");
 
         }
 

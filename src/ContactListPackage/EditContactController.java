@@ -85,6 +85,10 @@ public class EditContactController {
         });
         disablingApplyButton.play();
     }
+
+    public void asd(){
+        System.out.println("asd");
+    }
 }
 
 

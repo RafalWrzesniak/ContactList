@@ -9,9 +9,14 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    static Controller mainController;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("MainContactsMenu.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainContactsMenu.fxml"));
+        Parent root = loader.load();
+        mainController = loader.getController();
+
         primaryStage.setTitle("ContactList");
         primaryStage.setMinHeight(200);
         primaryStage.setMinWidth(500);
