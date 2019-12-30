@@ -31,7 +31,7 @@ public class Controller {
     @FXML private AnchorPane anchor = new AnchorPane();
     @FXML private Label labelka = new Label();
     @FXML public BorderPane mainBorderPane = new BorderPane();
-    @FXML private TableView<Contact> contactTable = new TableView<>();
+    @FXML public TableView<Contact> contactTable = new TableView<>();
     @FXML private TableColumn<Contact, String> tableName = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tableSurname = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tablePhone = new TableColumn<>();
@@ -42,19 +42,19 @@ public class Controller {
     @FXML private TextField ncPopNote;
 
 
-    private Contact kl = new Contact("Klaudia", "Johns", "123123123", "girl");
-    private Contact rf = new Contact("Rafał", "Wick", "456456456", "boy");
-    private Contact th = new Contact("Someone", "Else", "789789789", "Here");
     private Robot tabPresser = new Robot();
     private boolean shouldBeRunning = true;
-    public ObservableList<Contact> lista = FXCollections.observableArrayList(kl, rf, th);
+    public ObservableList<Contact> lista = FXCollections.observableArrayList();
+    public String[] columnNames = {"name", "surname", "phone", "note"};
 
 
     public void initialize() {
-        tableName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tableSurname.setCellValueFactory(new PropertyValueFactory<>("surname"));
-        tablePhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        tableNote.setCellValueFactory(new PropertyValueFactory<>("note"));
+        tableName.setCellValueFactory(new PropertyValueFactory<>(columnNames[0]));
+        tableSurname.setCellValueFactory(new PropertyValueFactory<>(columnNames[1]));
+        tablePhone.setCellValueFactory(new PropertyValueFactory<>(columnNames[2]));
+        tableNote.setCellValueFactory(new PropertyValueFactory<>(columnNames[3]));
+
+        lista = IOoperations.readData(columnNames);
         contactTable.setItems(lista);
 
         clearAllButton.setOnMouseReleased(actionEvent -> ncMenuButton.show());
@@ -180,7 +180,6 @@ public class Controller {
     @FXML
     private void exitProgram() {
         Platform.exit();
-//        IOoperations.writeData(new Contact("próba", "numer 2", "", ""));
     }
 
 
@@ -235,10 +234,9 @@ public class Controller {
             e.printStackTrace();
             return;
         }
-        EditContactController controller = fxmlLoader.getController();
-        controller.dialogApply.setOnAction(apply -> processApplyDialog(title, controller, window));
-        controller.dialogCancel.setOnAction(hide -> window.hide());
-        controller.asd();
+        EditContactController editController = fxmlLoader.getController();
+        editController.dialogApply.setOnAction(apply -> processApplyDialog(title, editController, window));
+        editController.dialogCancel.setOnAction(hide -> window.hide());
 
         dialog.showAndWait();
 
@@ -288,16 +286,10 @@ public class Controller {
     }
 
         private void processApplyDialog(String title, EditContactController controller, Window window) {
-            switch (title) {
-                case "Edit":
-                    editContact(controller.editContact);
-                    break;
-                case "Copy":
-                    copyContact(controller.editContact);
-                    break;
-                case "Create":
-                    addContact(controller.editContact);
-                    break;
+            if (title.equals("Edit")) {
+                editContact(controller.editContact);
+            } else if(title.equals("Create") || title.equals("Copy")) {
+                addContact(controller.editContact);
             }
             window.hide();
         }
@@ -320,21 +312,11 @@ public class Controller {
         }
 
 
-        private void copyContact(Contact editContact) {
-            ncPopName.setText(editContact.getName());
-            ncPopSurName.setText((editContact.getSurname()));
-            ncPopPhone.setText(editContact.getPhone());
-            ncPopNote.setText(editContact.getNote());
-            ncApply();
-            infoBanner("Contact " + editContact.getName() + " " + editContact.getSurname() + " copied", "orange");
-        }
-
         private void infoBanner(String text, String color){
             showCorrectionInfo(text, true, color);
             PauseTransition showInfo = new PauseTransition(Duration.seconds(4));
             showInfo.setOnFinished((e) -> showCorrectionInfo(text, false, color));
             showInfo.play();
-
         }
 
 }

@@ -3,18 +3,14 @@ package ContactListPackage;
 import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.util.Duration;
-
-import java.util.List;
 
 public class EditContactController {
 
@@ -86,9 +82,6 @@ public class EditContactController {
         disablingApplyButton.play();
     }
 
-    public void asd(){
-        System.out.println("asd");
-    }
 }
 
 

@@ -1,12 +1,17 @@
 package ContactListPackage;
 
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -16,12 +21,7 @@ import java.io.IOException;
 
 public class IOoperations {
 
-
-    public static void writeData (Contact newContact) {
-
-
-        System.out.println(Main.mainController.lista.get(0).getName());
-
+    public static void writeData(Contact newContact) {
         try {
             File inputFile = new File("contacts.xml");
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -36,11 +36,10 @@ public class IOoperations {
                 rootElement = doc.createElement("contacts");
                 doc.appendChild(rootElement);
             }
-            System.out.println();
-            // contact element
             Element contact = doc.createElement("contact");
             try {
-                contact.setAttribute("id", String.valueOf(Integer.parseInt(rootElement.getLastChild().getAttributes().getNamedItem("id").getNodeValue()) + 1));
+                contact.setAttribute("id", String.valueOf(Integer.parseInt(rootElement.getLastChild().
+                        getAttributes().getNamedItem("id").getNodeValue()) + 1));
             } catch (NullPointerException e) {
                 contact.setAttribute("id", "0");
             }
@@ -72,22 +71,37 @@ public class IOoperations {
             transformer.transform(source, result);
 
             // Output to console for testing
-            StreamResult consoleResult = new StreamResult(System.out);
-            transformer.transform(source, consoleResult);
+//            StreamResult consoleResult = new StreamResult(System.out);
+//            transformer.transform(source, consoleResult);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
-
-
-
-
     }
 
-
-
-
+    public static ObservableList<Contact> readData(String[] columnNames) {
+        ObservableList<Contact> lista = FXCollections.observableArrayList();
+        try {
+            File inputFile = new File("contacts.xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputFile);
+            doc.getDocumentElement().normalize();
+            NodeList xmlList = doc.getElementsByTagName("contact");
+            for (int i = 0; i < xmlList.getLength(); i++){
+                Node contactNode = xmlList.item(i);
+                if (contactNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element contactNodeElement = (Element) contactNode;
+                    String nodeContName = contactNodeElement.getElementsByTagName(columnNames[0]).item(0).getTextContent();
+                    String nodeContSurname = contactNodeElement.getElementsByTagName(columnNames[1]).item(0).getTextContent();
+                    String nodeContPhone = contactNodeElement.getElementsByTagName(columnNames[2]).item(0).getTextContent();
+                    String nodeContNote = contactNodeElement.getElementsByTagName(columnNames[3]).item(0).getTextContent();
+                    lista.add(new Contact(nodeContName, nodeContSurname, nodeContPhone, nodeContNote));
+                }
+            }
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+//            e.printStackTrace();
+        }
+    return lista;
+    }
 }
