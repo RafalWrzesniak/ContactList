@@ -54,7 +54,7 @@ public class Controller {
         tablePhone.setCellValueFactory(new PropertyValueFactory<>(columnNames[2]));
         tableNote.setCellValueFactory(new PropertyValueFactory<>(columnNames[3]));
 
-        lista = IOoperations.readData(columnNames);
+        lista = IOoperations.readContacts(columnNames);
         contactTable.setItems(lista);
 
         clearAllButton.setOnMouseReleased(actionEvent -> ncMenuButton.show());
@@ -83,20 +83,9 @@ public class Controller {
             MenuItem editContact = new MenuItem("Edit contact");
             MenuItem deleteContact = new MenuItem("Delete contact");
             MenuItem copyContact = new MenuItem("Copy contact");
-            deleteContact.setOnAction(event -> {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Delete contact");
-                alert.setHeaderText("Delete conact: " + row.getItem().getName() + " " + row.getItem().getSurname());
-                alert.setContentText("Are you sure to delete?");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent() && (result.get() == ButtonType.OK)) {
-                    lista.remove(contactTable.getSelectionModel().getFocusedIndex());
-                    contactTable.getItems().remove(row.getItem());
-                    infoBanner("Contact " + contactTable.getSelectionModel().getSelectedItem().getName()
-                            + " " + contactTable.getSelectionModel().getSelectedItem().getSurname() + " removed", "orange");
-                }
-            });
+
             editContact.setOnAction(actionEvent -> showEditContactDialog("Edit"));
+            deleteContact.setOnAction(actionEvent -> deleteContact());
             copyContact.setOnAction(actionEvent -> showEditContactDialog("Copy"));
             createNewContact.setOnAction(actionEvent -> showEditContactDialog("Create"));
 
@@ -212,10 +201,9 @@ public class Controller {
             String surname = contactTable.getSelectionModel().getSelectedItem().getSurname();
             String phone = contactTable.getSelectionModel().getSelectedItem().getPhone();
             String note = contactTable.getSelectionModel().getSelectedItem().getNote();
-            tempContact = new Contact(name, surname, phone, note);
-        } else {
-            tempContact = new Contact("", "", "", "");
-        }
+            String id = contactTable.getSelectionModel().getSelectedItem().getId();
+            tempContact = new Contact(name, surname, phone, note, id);
+        } else tempContact = new Contact();
 
         Dialog dialog = new Dialog<>();
         dialog.initOwner(mainBorderPane.getScene().getWindow());
@@ -297,7 +285,7 @@ public class Controller {
         private void addContact(Contact newContact) {
             lista.add(newContact);
             contactTable.refresh();
-            IOoperations.writeData(newContact);
+            IOoperations.saveAllToXml(lista);
             infoBanner("New contact " + newContact.getName() + " " + newContact.getSurname() + " created", "green");
 
         }
@@ -308,7 +296,24 @@ public class Controller {
             lista.get(contactTable.getSelectionModel().getFocusedIndex()).setPhone(editContact.getPhone());
             lista.get(contactTable.getSelectionModel().getFocusedIndex()).setNote(editContact.getNote());
             contactTable.refresh();
+            IOoperations.saveAllToXml(lista);
             infoBanner("Contact " + editContact.getName() + " " + editContact.getSurname() + " edited", "orange");
+        }
+
+        private void deleteContact () {
+            Contact contactToDelete = contactTable.getSelectionModel().getSelectedItem();
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete contact");
+            alert.setHeaderText("Delete contact: " + contactToDelete.getName() + " " + contactToDelete.getSurname());
+            alert.setContentText("Are you sure to delete?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && (result.get() == ButtonType.OK)) {
+                lista.remove(contactTable.getSelectionModel().getFocusedIndex());
+                contactTable.getItems().remove(contactToDelete);
+                IOoperations.saveAllToXml(lista);
+                infoBanner("Contact " + contactTable.getSelectionModel().getSelectedItem().getName()
+                        + " " + contactTable.getSelectionModel().getSelectedItem().getSurname() + " removed", "orange");
+            }
         }
 
 

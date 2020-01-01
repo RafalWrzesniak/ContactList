@@ -6,10 +6,14 @@ public class Contact {
     private String surname;
     private String phone;
     private String note;
+    private String id;
 
 
     public Contact() {
-
+        setName("");
+        setSurname("");
+        setPhone("");
+        setNote("");
     }
 
     public Contact(String name, String surname, String phone, String note) {
@@ -19,7 +23,19 @@ public class Contact {
         setNote(note);
     }
 
+    public Contact(String name, String surname, String phone, String note, String id) {
+        setName(name);
+        setSurname(surname);
+        setPhone(phone);
+        setNote(note);
+        setId(id);
+    }
+
     // setters
+    public void setId(String id){
+        this.id = id;
+    }
+
     public void setName(String name) throws IllegalArgumentException {
         if(name.trim().isEmpty() || name.length() > 2 && name.length() < 15) {
             this.name = name;
@@ -62,6 +78,10 @@ public class Contact {
 
 
     // getters
+    public String getId() {
+        return this.id;
+    }
+
     public String getName() {
         return name;
     }
@@ -69,7 +89,6 @@ public class Contact {
         return surname;
     }
     public String getPhone() {
-//        return phone != 0 ? String.valueOf(phone) : "";
         return phone;
     }
 

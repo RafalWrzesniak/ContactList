@@ -25,7 +25,7 @@ public class EditContactController {
 
 
     public EditContactController(Contact editContact) {
-        this.editContact = new Contact(editContact.getName(), editContact.getSurname(), editContact.getPhone(), editContact.getNote());
+        this.editContact = editContact;
     }
 
     public void initialize(){
@@ -67,7 +67,10 @@ public class EditContactController {
                 editContact.setSurname(dialogSurname.getText());
                 editContact.setPhone(dialogPhone.getText());
                 editContact.setNote(dialogNote.getText());
-                dialogApply.setDisable(false);
+                if(dialogName.getText().trim().isEmpty() && dialogSurname.getText().trim().isEmpty()
+                        && dialogPhone.getText().trim().isEmpty() && dialogNote.getText().trim().isEmpty()) {
+                    dialogApply.setDisable(true);
+                } else dialogApply.setDisable(false);
                 dialogApply.getTooltip().hide();
             } catch (IllegalArgumentException e) {
                 Stage dial = (Stage) dialogApply.getParent().getScene().getWindow();
