@@ -37,14 +37,14 @@ public class Contact {
     }
 
     public void setName(String name) throws IllegalArgumentException {
-        if(name.trim().isEmpty() || name.length() > 2 && name.length() < 15) {
+        if(name.trim().isEmpty() || name.length() > 2 && name.length() <= 15) {
             this.name = name;
         } else {
             throw new IllegalArgumentException("Name must have more then 2 and less then 15 characters!");
         }
     }
     public void setSurname(String surname) throws IllegalArgumentException {
-        if(surname.trim().isEmpty() || surname.length() > 3 && surname.length() < 25) {
+        if(surname.trim().isEmpty() || surname.length() > 3 && surname.length() <= 25) {
             this.surname = surname;
         } else {
             throw new IllegalArgumentException("Surname must have more then 3 and less then 25 characters!");

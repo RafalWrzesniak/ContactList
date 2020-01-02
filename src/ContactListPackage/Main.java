@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 
@@ -20,6 +21,7 @@ public class Main extends Application {
         primaryStage.setTitle("ContactList");
         primaryStage.setMinHeight(200);
         primaryStage.setMinWidth(530);
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png") ));
         Scene mainScene = new Scene(root, 520, 500);
 
         primaryStage.setScene(mainScene);

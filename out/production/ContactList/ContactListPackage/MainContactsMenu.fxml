@@ -14,14 +14,14 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
-<BorderPane fx:id="mainBorderPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ContactListPackage.Controller">
+<BorderPane fx:id="mainBorderPane" prefHeight="400.0" prefWidth="520.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ContactListPackage.Controller">
    <center>
       <TableView fx:id="contactTable" prefHeight="365.0" prefWidth="496.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="tableName" minWidth="50" prefWidth="100" text="Name" />
           <TableColumn fx:id="tableSurname" minWidth="60" prefWidth="100" text="Surname" />
           <TableColumn fx:id="tablePhone" minWidth="50" prefWidth="100" text="Phone" />
-          <TableColumn fx:id="tableNote" minWidth="50" prefWidth="100" text="Note" />
+          <TableColumn fx:id="tableNote" minWidth="50" prefWidth="220" text="Note" />
         </columns>
       </TableView>
    </center>

@@ -4,6 +4,7 @@ import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -44,6 +45,7 @@ public class Controller {
 
     private Robot tabPresser = new Robot();
     private boolean shouldBeRunning = true;
+    private boolean animationIsInProgress = false;
     public ObservableList<Contact> lista = FXCollections.observableArrayList();
     public String[] columnNames = {"name", "surname", "phone", "note"};
 
@@ -60,6 +62,10 @@ public class Controller {
         clearAllButton.setOnMouseReleased(actionEvent -> ncMenuButton.show());
         ncApplyButton.setOnMouseReleased(actionEvent -> showMenuAfterError());
         ncMenuButton.setOnMouseReleased(actionEvent -> backgroundErrorChecking());
+        ncPopName.textProperty().addListener(new MyChangeListener(ncPopName, 15));
+        ncPopSurName.textProperty().addListener(new MyChangeListener(ncPopSurName, 25));
+        ncPopPhone.textProperty().addListener(new MyChangeListener(ncPopPhone, 9));
+        ncPopNote.textProperty().addListener(new MyChangeListener(ncPopNote, 50));
         anchor.setPrefHeight(44);
         anchor.setPrefWidth(0);
         labelka.setVisible(false);
@@ -105,7 +111,6 @@ public class Controller {
                     ncPopPhone.getText(), ncPopNote.getText());
             clearNcFields();
             tabPresser.keyPress(KeyCode.ESCAPE);
-            extendColumnWidth();
             addContact(newContact);
         }
     }
@@ -140,22 +145,29 @@ public class Controller {
 
     private void showCorrectionInfo(String infoText, boolean showHide, String color){
         final TranslateTransition translateLabel = new TranslateTransition(Duration.millis(750), anchor);
-        if (showHide) {
-            if(!labelka.isVisible() || !labelka.getText().equals(infoText)){
+        if (showHide && !animationIsInProgress) {
+            if (!labelka.isVisible() || !labelka.getText().equals(infoText)) {
+                animationIsInProgress = true;
                 labelka.setText(infoText);
                 labelka.setVisible(true);
                 labelka.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-background-color: " + color);
+                translateLabel.setOnFinished(actionEvent -> animationIsInProgress = false);
                 translateLabel.setFromY(44);
                 translateLabel.setToY(0);
                 translateLabel.play();
             }
-        } else if(labelka.isVisible()){
+        } else if (labelka.isVisible() && !animationIsInProgress) {
+            animationIsInProgress = true;
             translateLabel.setFromY(0);
             translateLabel.setToY(44);
-            translateLabel.setOnFinished(actionEvent -> labelka.setVisible(false));
+            translateLabel.setOnFinished(actionEvent -> {
+                labelka.setVisible(false);
+                animationIsInProgress = false;
+            });
             translateLabel.play();
+            }
         }
-    }
+
 
 
     @FXML
@@ -203,7 +215,7 @@ public class Controller {
             String note = contactTable.getSelectionModel().getSelectedItem().getNote();
             String id = contactTable.getSelectionModel().getSelectedItem().getId();
             tempContact = new Contact(name, surname, phone, note, id);
-        } else tempContact = new Contact(ncPopName.getText(), ncPopSurName.getText(), ncPopPhone.getText(), ncPopNote.getText());
+        } else tempContact = new Contact();
 
         Dialog dialog = new Dialog<>();
         dialog.initOwner(mainBorderPane.getScene().getWindow());
@@ -259,20 +271,6 @@ public class Controller {
         }
     }
 
-    private void extendColumnWidth() {
-        String testingCellValue;
-        int longestValue = 0;
-        for (int column = 0; column < 4; column++) {
-            for (int row = 0; row < lista.size(); row++) {
-                testingCellValue = contactTable.getColumns().get(column).getCellObservableValue(row).getValue().toString();
-                if(testingCellValue.length() > longestValue) longestValue = testingCellValue.length();
-            }
-            if(longestValue > 17) contactTable.getColumns().get(column).setPrefWidth(130);
-            if(longestValue > 30) contactTable.getColumns().get(column).setPrefWidth(160);
-            longestValue = 0;
-        }
-    }
-
         private void processApplyDialog(String title, EditContactController controller, Window window) {
             if (title.equals("Edit")) {
                 editContact(controller.editContact);
@@ -322,6 +320,13 @@ public class Controller {
             PauseTransition showInfo = new PauseTransition(Duration.seconds(4));
             showInfo.setOnFinished((e) -> showCorrectionInfo(text, false, color));
             showInfo.play();
+        }
+
+
+        public void lengthListener(ObservableValue<? extends String> observableValue, String oldValue, String newValue, TextField textField, int lenght) {
+            if (newValue.length() > lenght) {
+                textField.setText(oldValue);
+            }
         }
 
 }

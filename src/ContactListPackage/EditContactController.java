@@ -1,8 +1,6 @@
 package ContactListPackage;
 
 import javafx.animation.PauseTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -21,10 +19,10 @@ public class EditContactController {
     @FXML private TextField dialogPhone = new TextField();
     @FXML private TextArea dialogNote = new TextArea();
 
-    public Contact editContact;
+    Contact editContact;
 
 
-    public EditContactController(Contact editContact) {
+    EditContactController(Contact editContact) {
         this.editContact = editContact;
     }
 
@@ -34,28 +32,25 @@ public class EditContactController {
         dialogSurname.setText(editContact.getSurname());
         dialogPhone.setText(editContact.getPhone());
         dialogNote.setText(editContact.getNote());
-
-        dialogPhone.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (!newValue.matches("\\d*")) {
-                    dialogPhone.setText(newValue.replaceAll("[^\\d]", ""));
-                }
+        dialogPhone.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                dialogPhone.setText(newValue.replaceAll("[^\\d]", ""));
             }
-
-        });
-
-        dialogNote.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-                if (newValue.length() > 50) {
-                    dialogNote.setText(oldValue);
-                }
+            if (newValue.length() > 9) {
+                dialogPhone.setText(oldValue);
             }
         });
+
+        dialogName.textProperty().addListener(new MyChangeListener(dialogName, 15));
+        dialogSurname.textProperty().addListener(new MyChangeListener(dialogSurname, 25));
+        dialogNote.textProperty().addListener(new MyChangeListener(dialogNote, 50));
+
+
         backgroundButtonEnabling();
-
     }
+
+
+
 
     private void backgroundButtonEnabling() {
         Tooltip tooltip = new Tooltip();
@@ -87,6 +82,4 @@ public class EditContactController {
     }
 
 }
-
-
 
