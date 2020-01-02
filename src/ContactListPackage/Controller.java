@@ -203,7 +203,7 @@ public class Controller {
             String note = contactTable.getSelectionModel().getSelectedItem().getNote();
             String id = contactTable.getSelectionModel().getSelectedItem().getId();
             tempContact = new Contact(name, surname, phone, note, id);
-        } else tempContact = new Contact();
+        } else tempContact = new Contact(ncPopName.getText(), ncPopSurName.getText(), ncPopPhone.getText(), ncPopNote.getText());
 
         Dialog dialog = new Dialog<>();
         dialog.initOwner(mainBorderPane.getScene().getWindow());

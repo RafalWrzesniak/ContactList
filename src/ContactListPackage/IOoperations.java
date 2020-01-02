@@ -90,7 +90,6 @@ class IOoperations {
         Document doc = openContactsDocument();
         for (Contact contactToSave: lista) {
             writeContact(contactToSave, doc);
-            System.out.println(contactToSave.getName());
         }
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();

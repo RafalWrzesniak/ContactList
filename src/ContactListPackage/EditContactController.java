@@ -29,6 +29,7 @@ public class EditContactController {
     }
 
     public void initialize(){
+        dialogApply.setDisable(true);
         dialogName.setText(editContact.getName());
         dialogSurname.setText(editContact.getSurname());
         dialogPhone.setText(editContact.getPhone());

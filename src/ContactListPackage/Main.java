@@ -19,8 +19,8 @@ public class Main extends Application {
 
         primaryStage.setTitle("ContactList");
         primaryStage.setMinHeight(200);
-        primaryStage.setMinWidth(500);
-        Scene mainScene = new Scene(root, 500, 500);
+        primaryStage.setMinWidth(530);
+        Scene mainScene = new Scene(root, 520, 500);
 
         primaryStage.setScene(mainScene);
         primaryStage.show();
