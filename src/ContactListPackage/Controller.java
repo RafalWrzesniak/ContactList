@@ -39,6 +39,7 @@ public class Controller {
     @FXML private TextField ncPopSurName = new TextField();
     @FXML private TextField ncPopPhone = new TextField();
     @FXML private TextField ncPopNote = new TextField();
+    @FXML private TextField searchContact = new TextField();
 
 
     private Robot tabPresser = new Robot();
@@ -64,6 +65,7 @@ public class Controller {
         ncPopSurName.textProperty().addListener(new MyChangeListener(ncPopSurName, 25));
         ncPopPhone.textProperty().addListener(new MyChangeListener(ncPopPhone, 9));
         ncPopNote.textProperty().addListener(new MyChangeListener(ncPopNote, 50));
+        searchContact.textProperty().addListener(new MyChangeListener(searchContact, lista, contactTable));
         anchor.setPrefHeight(44);
         anchor.setPrefWidth(0);
         labelka.setVisible(false);
