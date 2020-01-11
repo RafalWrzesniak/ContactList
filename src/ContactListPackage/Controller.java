@@ -4,14 +4,12 @@ import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
@@ -37,17 +35,17 @@ public class Controller {
     @FXML private TableColumn<Contact, String> tableSurname = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tablePhone = new TableColumn<>();
     @FXML private TableColumn<Contact, String> tableNote = new TableColumn<>();
-    @FXML private TextField ncPopName;
-    @FXML private TextField ncPopSurName;
-    @FXML private TextField ncPopPhone;
-    @FXML private TextField ncPopNote;
+    @FXML private TextField ncPopName = new TextField();
+    @FXML private TextField ncPopSurName = new TextField();
+    @FXML private TextField ncPopPhone = new TextField();
+    @FXML private TextField ncPopNote = new TextField();
 
 
     private Robot tabPresser = new Robot();
     private boolean shouldBeRunning = true;
     private boolean animationIsInProgress = false;
-    public ObservableList<Contact> lista = FXCollections.observableArrayList();
-    public String[] columnNames = {"name", "surname", "phone", "note"};
+    private ObservableList<Contact> lista = FXCollections.observableArrayList();
+    private String[] columnNames = {"name", "surname", "phone", "note"};
 
 
     public void initialize() {
@@ -75,12 +73,7 @@ public class Controller {
         initTransLabel.setToY(44);
         initTransLabel.play();
 
-        tableName.setCellFactory(TextFieldTableCell.forTableColumn());
-        tableSurname.setCellFactory(TextFieldTableCell.forTableColumn());
-        tablePhone.setCellFactory(TextFieldTableCell.forTableColumn());
-        tableNote.setCellFactory(TextFieldTableCell.forTableColumn());
-
-        contactTable.setEditable(true);
+        contactTable.setEditable(false);
         tableName.setEditable(false);
 
         contactTable.setRowFactory(contactTableView -> {
@@ -318,15 +311,12 @@ public class Controller {
         private void infoBanner(String text, String color){
             showCorrectionInfo(text, true, color);
             PauseTransition showInfo = new PauseTransition(Duration.seconds(4));
-            showInfo.setOnFinished((e) -> showCorrectionInfo(text, false, color));
+            showInfo.setOnFinished((e) -> {
+                    if (labelka.getStyle().matches("(.*)"+color+"(.*)")) {
+                        showCorrectionInfo(text, false, color);
+                    }
+            });
             showInfo.play();
-        }
-
-
-        public void lengthListener(ObservableValue<? extends String> observableValue, String oldValue, String newValue, TextField textField, int lenght) {
-            if (newValue.length() > lenght) {
-                textField.setText(oldValue);
-            }
         }
 
 }

@@ -23,7 +23,7 @@ public class MyChangeListener implements ChangeListener<String> {
 
     @Override
     public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-        if (textField.getId().equals("ncPopPhone") || textField.getId().equals("dialogPhone"))
+        if (textField != null && (textField.getId().equals("ncPopPhone") || textField.getId().equals("dialogPhone")))
             digitListener(newValue, textField);
         if (textArea != null) lengthListener(oldValue, newValue, textArea, length);
         if (textField != null) lengthListener(oldValue, newValue, textField, length);
