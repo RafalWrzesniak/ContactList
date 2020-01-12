@@ -69,7 +69,7 @@ public class Contact {
 
 
     public void setNote(String note) {
-        if(note.trim().isEmpty() || note.length() < 50) {
+        if(note.trim().isEmpty() || note.length() <= 50) {
             this.note = note;
         } else {
             throw new IllegalArgumentException("Note must have less then 50 characters!");

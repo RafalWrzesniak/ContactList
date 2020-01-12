@@ -10,11 +10,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.robot.Robot;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
@@ -23,6 +25,10 @@ import java.util.Optional;
 
 public class Controller {
 
+    @FXML private Rectangle greenBorder = new Rectangle();
+    @FXML private Rectangle redBorder = new Rectangle();
+    @FXML private ImageView sadVote = new ImageView();
+    @FXML private ImageView happyVote = new ImageView();
     @FXML private Button createNewContact = new Button();
     @FXML private Button clearAllButton = new Button();
     @FXML private Button ncApplyButton = new Button();
@@ -40,7 +46,6 @@ public class Controller {
     @FXML private TextField ncPopPhone = new TextField();
     @FXML private TextField ncPopNote = new TextField();
     @FXML private TextField searchContact = new TextField();
-
 
     private Robot tabPresser = new Robot();
     private boolean shouldBeRunning = true;
@@ -69,6 +74,13 @@ public class Controller {
         anchor.setPrefHeight(44);
         anchor.setPrefWidth(0);
         labelka.setVisible(false);
+
+        greenBorder.setVisible(false);
+        redBorder.setVisible(false);
+        sadVote.setOnMouseClicked(mouseEvent -> {redBorder.setVisible(true); greenBorder.setVisible(false);
+                                                 happyVote.setOpacity(0.5); sadVote.setOpacity(1);});
+        happyVote.setOnMouseClicked(mouseEvent -> {redBorder.setVisible(false); greenBorder.setVisible(true);
+                                                   sadVote.setOpacity(0.5); happyVote.setOpacity(1);});
 
         final TranslateTransition initTransLabel = new TranslateTransition(Duration.millis(10), anchor);
         initTransLabel.setFromY(0);
@@ -127,6 +139,10 @@ public class Controller {
             if((!isAnyFieldFilled() || checkTextFieldsOptions(new Contact())) && labelka.isVisible() && shouldBeRunning && ncApplyButton.isDisabled()) {
                 showCorrectionInfo("", false, "red");
                 ncApplyButton.setDisable(false);
+            }
+
+            if (!ncApplyButton.isDisabled() && labelka.isVisible()) {
+                showCorrectionInfo("", false, "red");
             }
 
             if(shouldBeRunning){
@@ -194,6 +210,7 @@ public class Controller {
             e.printStackTrace();
             return;
         }
+
 
         dialog.getDialogPane().getButtonTypes().add(new ButtonType("Run away from here", ButtonBar.ButtonData.CANCEL_CLOSE));
         dialog.show();

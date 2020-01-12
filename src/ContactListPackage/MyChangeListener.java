@@ -39,7 +39,8 @@ public class MyChangeListener implements ChangeListener<String> {
                 digitListener(newValue, textField);
             } else if(textField.getId().equals("searchContact")) {
                 if (!newValue.isEmpty()){
-                    SortedList<Contact> sortedData = new SortedList<>(lista.filtered(contact -> contact.getName().toLowerCase().contains(newValue.toLowerCase()) ||
+                    SortedList<Contact> sortedData = new SortedList<>(lista.filtered(contact ->
+                            contact.getName().toLowerCase().contains(newValue.toLowerCase()) ||
                             contact.getSurname().toLowerCase().contains(newValue.toLowerCase()) ||
                             contact.getPhone().toLowerCase().contains(newValue.toLowerCase()) ||
                             contact.getNote().toLowerCase().contains(newValue.toLowerCase())));

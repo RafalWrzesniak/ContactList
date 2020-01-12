@@ -1,20 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="365.0" prefWidth="459.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ContactListPackage.Controller">
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.*?>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="404.0" prefWidth="459.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ContactListPackage.Controller">
    <children>
-      <Label layoutX="47.0" layoutY="23.0" prefHeight="93.0" prefWidth="366.0" text="To moja pierwsza aplikacja okienkowa, więc jest bieda okropna, ale może być tylko lepiej." textAlignment="JUSTIFY" wrapText="true">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <Label layoutX="47.0" layoutY="112.0" prefHeight="93.0" prefWidth="366.0" text="A teraz pozwól dodać sobie nowy kontakt lub podziel się opinią, z którą nikt nic nie zrobi." textAlignment="CENTER" wrapText="true">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
+      <VBox alignment="TOP_CENTER" prefHeight="210.0" prefWidth="459.0">
+         <children>
+            <Label prefHeight="93.0" prefWidth="366.0" text="To jest moja pierwsza aplikacja okienkowa, także cudów nie ma, ale może być tylko lepiej." textAlignment="JUSTIFY" wrapText="true">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label prefHeight="93.0" prefWidth="366.0" text="A teraz pozwól dodać sobie nowy kontakt lub podziel się opinią, która pomoże twórcy programu robić jeszcze lepsze aplikacje." textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Label text="Jak jest?"><font><Font size="16.0" /></font>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin></Label>
+
+         </children>
+      </VBox>
+      <GridPane alignment="CENTER" hgap="10.0" layoutX="34.0" layoutY="210.0" prefHeight="171.0" prefWidth="366.0">
+        <columnConstraints>
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="117.0" minHeight="0.0" prefHeight="26.0" valignment="CENTER" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="244.0" minHeight="10.0" prefHeight="152.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Text fill="#2bda1b" strokeType="OUTSIDE" strokeWidth="0.0" text="Jest super!">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Text>
+            <Rectangle fx:id="greenBorder" fill="#2bda1b" height="140.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" visible="false" width="140.0" GridPane.rowIndex="1" />
+            <ImageView fx:id="happyVote" fitHeight="150.0" fitWidth="127.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1">
+               <image>
+                  <Image url="/happy.png" />
+               </image>
+            </ImageView>
+            <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Średnio..." GridPane.columnIndex="1">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Text>
+            <Rectangle fx:id="redBorder" fill="RED" height="141.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" visible="false" width="141.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ImageView fx:id="sadVote" fitHeight="131.0" fitWidth="191.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <image>
+                  <Image url="/sad.png" />
+               </image>
+            </ImageView>
+
+         </children>
+      </GridPane>
    </children>
 </Pane>
