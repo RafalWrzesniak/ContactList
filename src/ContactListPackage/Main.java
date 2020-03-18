@@ -22,7 +22,7 @@ public class Main extends Application {
         primaryStage.setMinHeight(200);
         primaryStage.setMinWidth(530);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png") ));
-        Scene mainScene = new Scene(root, 520, 500);
+        Scene mainScene = new Scene(root, 540, 500);
 
         primaryStage.setScene(mainScene);
         primaryStage.show();
