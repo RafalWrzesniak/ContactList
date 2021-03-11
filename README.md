@@ -1,5 +1,5 @@
 # Contact List application
-#### This application is for managing contacts. There are possibility to create new contacts, edit existing ones and delete them. Everything is saved into xml file. There is several options that helps in managing all this like searching for contacts text field and animation with information about errors and done actions.
+#### This application is for managing contacts. There is possibility to create new contacts, edit existing ones and delete them. Everything is saved into xml file. There are several options that helps in managing all this like searching for contacts text field and animation with information about errors and done actions.
 
 ## Some examples:
 
